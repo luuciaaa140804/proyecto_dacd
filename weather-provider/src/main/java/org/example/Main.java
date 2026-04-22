@@ -1,19 +1,34 @@
 package org.example;
 
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
+import com.google.gson.JsonObject;
+import java.util.concurrent.*;
+
 public class Main {
     public static void main(String[] args) {
-        // Press Alt+Intro with your caret at the highlighted text to see how
-        // IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        SqliteWeatherStore store = new SqliteWeatherStore("weather.db");
+        // SUSTITUYE "TU_API_KEY_AQUI" por tu código de OpenWeatherMap
+        WeatherSupplier supplier = new WeatherSupplier("TU_API_KEY_AQUI");
 
-        // Press Mayús+F10 or click the green arrow button in the gutter to run the code.
-        for (int i = 1; i <= 5; i++) {
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
-            // Press Mayús+F9 to start debugging your code. We have set one breakpoint
-            // for you, but you can always add more by pressing Ctrl+F8.
-            System.out.println("i = " + i);
-        }
+        System.out.println("--- Capturador de Clima Activo ---");
+
+        // Tarea que se ejecuta periódicamente
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                String city = "Las Palmas";
+                JsonObject data = supplier.getSelectedData(city);
+
+                double temp = data.getAsJsonObject("main").get("temp").getAsDouble();
+                int humidity = data.getAsJsonObject("main").get("humidity").getAsInt();
+
+                // Guardamos en la base de datos [cite: 29]
+                store.insertWeather(city, temp, humidity);
+
+                System.out.println("[" + java.time.LocalTime.now() + "] Datos capturados para " + city);
+            } catch (Exception e) {
+                System.err.println("Error en la captura: " + e.getMessage());
+            }
+        }, 0, 1, TimeUnit.HOURS); // Ejecuta ahora y luego cada 1 hora [cite: 30]
     }
 }
