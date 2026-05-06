@@ -1,19 +1,101 @@
 package org.example;
 
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 public class Main {
+
     public static void main(String[] args) {
-        // Press Alt+Intro with your caret at the highlighted text to see how
-        // IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
 
-        // Press Mayús+F10 or click the green arrow button in the gutter to run the code.
-        for (int i = 1; i <= 5; i++) {
+        // SUSTITUYE por tu clave de football-data.org
+        // Registro gratuito en: https://www.football-data.org/client/register
+        final String API_KEY = "TU_API_KEY_AQUI";
 
-            // Press Mayús+F9 to start debugging your code. We have set one breakpoint
-            // for you, but you can always add more by pressing Ctrl+F8.
-            System.out.println("i = " + i);
-        }
+        FootballApiClient client = new FootballApiClient(API_KEY);
+        SqliteFootballStore store = new SqliteFootballStore("football.db");
+
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
+        System.out.println("--- Capturador de Futbol (UD Las Palmas) Activo ---");
+
+        scheduler.scheduleAtFixedRate(() -> {
+            System.out.println("\n[" + java.time.LocalDateTime.now() + "] Iniciando captura...");
+
+            // --- 1. Ultimos partidos ---
+            try {
+                JsonArray matches = client.getLastMatches(10);
+                System.out.println("  Partidos recibidos: " + matches.size());
+
+                for (int i = 0; i < matches.size(); i++) {
+                    JsonObject match = matches.get(i).getAsJsonObject();
+
+                    int matchId        = match.get("id").getAsInt();
+                    String status      = match.get("status").getAsString();
+                    String matchDate   = match.get("utcDate").getAsString();
+                    String competition = match.getAsJsonObject("competition")
+                            .get("name").getAsString();
+                    String homeTeam    = match.getAsJsonObject("homeTeam")
+                            .get("name").getAsString();
+                    String awayTeam    = match.getAsJsonObject("awayTeam")
+                            .get("name").getAsString();
+
+                    JsonObject score = match.getAsJsonObject("score")
+                            .getAsJsonObject("fullTime");
+                    int homeScore = score.get("home").isJsonNull() ? -1
+                            : score.get("home").getAsInt();
+                    int awayScore = score.get("away").isJsonNull() ? -1
+                            : score.get("away").getAsInt();
+
+                    store.insertMatch(matchId, competition, matchDate,
+                            homeTeam, awayTeam, homeScore, awayScore, status);
+
+                    System.out.printf("  [Partido] %s vs %s  %d-%d  (%s)%n",
+                            homeTeam, awayTeam, homeScore, awayScore,
+                            matchDate.substring(0, 10));
+                }
+
+            } catch (Exception e) {
+                System.err.println("  Error al obtener partidos: " + e.getMessage());
+            }
+
+            // --- 2. Clasificacion ---
+            try {
+                JsonArray table = client.getStandings();
+                System.out.println("  Equipos en clasificacion: " + table.size());
+
+                for (int i = 0; i < table.size(); i++) {
+                    JsonObject row = table.get(i).getAsJsonObject();
+
+                    int position      = row.get("position").getAsInt();
+                    String teamName   = row.getAsJsonObject("team").get("name").getAsString();
+                    int played        = row.get("playedGames").getAsInt();
+                    int won           = row.get("won").getAsInt();
+                    int draw          = row.get("draw").getAsInt();
+                    int lost          = row.get("lost").getAsInt();
+                    int goalsFor      = row.get("goalsFor").getAsInt();
+                    int goalsAgainst  = row.get("goalsAgainst").getAsInt();
+                    int goalDiff      = row.get("goalDifference").getAsInt();
+                    int points        = row.get("points").getAsInt();
+
+                    store.insertStanding(position, teamName, played, won, draw,
+                            lost, goalsFor, goalsAgainst, goalDiff, points);
+
+                    if (teamName.contains("Las Palmas")) {
+                        System.out.printf("  [Clasificacion] UD Las Palmas -> %do | %d pts | %d PJ%n",
+                                position, points, played);
+                    }
+                }
+
+            } catch (Exception e) {
+                System.err.println("  Error al obtener clasificacion: " + e.getMessage());
+            }
+
+            System.out.println("[" + java.time.LocalDateTime.now() + "] Captura completada.");
+
+        }, 0, 1, TimeUnit.HOURS);
     }
 }

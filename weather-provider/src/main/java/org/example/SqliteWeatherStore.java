@@ -7,7 +7,7 @@ public class SqliteWeatherStore {
     private final String dbPath;
 
     public SqliteWeatherStore(String dbName) {
-        // Esto creará el archivo .db en la raíz de tu proyecto
+        // Esto creará el archivo .db enhttps://github.com/luuciaaa140804/proyecto_dacd la raíz de tu proyecto
         this.dbPath = "jdbc:sqlite:" + dbName;
         initDatabase();
     }
