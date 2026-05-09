@@ -9,14 +9,13 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
-        // SUSTITUYE por tu clave de football-data.org
-        // Registro gratuito en: https://www.football-data.org/client/register
         final String API_KEY = "88ed761369f5486497a7631081a403bc";
 
         FootballApiClient client = new FootballApiClient(API_KEY);
         SqliteFootballStore store = new SqliteFootballStore("football.db");
+        FootballEventPublisher publisher = new FootballEventPublisher();
 
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
@@ -50,8 +49,13 @@ public class Main {
                     int awayScore = score.get("away").isJsonNull() ? -1
                             : score.get("away").getAsInt();
 
+                    // Guardamos en SQLite (Sprint 1)
                     store.insertMatch(matchId, competition, matchDate,
                             homeTeam, awayTeam, homeScore, awayScore, status);
+
+                    // Publicamos en ActiveMQ (Sprint 2)
+                    publisher.publishMatch(competition, matchDate,
+                            homeTeam, awayTeam, homeScore, awayScore);
 
                     System.out.printf("  [Partido] %s vs %s  %d-%d  (%s)%n",
                             homeTeam, awayTeam, homeScore, awayScore,
@@ -81,8 +85,12 @@ public class Main {
                     int goalDiff      = row.get("goalDifference").getAsInt();
                     int points        = row.get("points").getAsInt();
 
+                    // Guardamos en SQLite (Sprint 1)
                     store.insertStanding(position, teamName, played, won, draw,
                             lost, goalsFor, goalsAgainst, goalDiff, points);
+
+                    // Publicamos en ActiveMQ (Sprint 2)
+                    publisher.publishStanding(position, teamName, points, played);
 
                     if (teamName.contains("Las Palmas")) {
                         System.out.printf("  [Clasificacion] UD Las Palmas -> %do | %d pts | %d PJ%n",

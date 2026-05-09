@@ -1,0 +1,30 @@
+{"ts":"2026-05-09T23:08:56.184624400Z","ss":"sports-scraper","type":"match","competition":"Primera Division","match_date":"2024-08-16T19:30:00Z","home_team":"UD Las Palmas","away_team":"Sevilla FC","home_score":2,"away_score":2}
+{"ts":"2026-05-09T23:08:56.206626700Z","ss":"sports-scraper","type":"match","competition":"Primera Division","match_date":"2024-08-25T17:00:00Z","home_team":"CD Leganés","away_team":"UD Las Palmas","home_score":2,"away_score":1}
+{"ts":"2026-05-09T23:08:56.217625500Z","ss":"sports-scraper","type":"match","competition":"Primera Division","match_date":"2024-08-29T19:30:00Z","home_team":"UD Las Palmas","away_team":"Real Madrid CF","home_score":1,"away_score":1}
+{"ts":"2026-05-09T23:08:56.227623400Z","ss":"sports-scraper","type":"match","competition":"Primera Division","match_date":"2024-09-01T15:00:00Z","home_team":"Deportivo Alavés","away_team":"UD Las Palmas","home_score":2,"away_score":0}
+{"ts":"2026-05-09T23:08:56.235626900Z","ss":"sports-scraper","type":"match","competition":"Primera Division","match_date":"2024-09-15T16:30:00Z","home_team":"UD Las Palmas","away_team":"Athletic Club","home_score":2,"away_score":3}
+{"ts":"2026-05-09T23:08:56.244628300Z","ss":"sports-scraper","type":"match","competition":"Primera Division","match_date":"2024-09-21T14:15:00Z","home_team":"CA Osasuna","away_team":"UD Las Palmas","home_score":2,"away_score":1}
+{"ts":"2026-05-09T23:08:56.251301700Z","ss":"sports-scraper","type":"match","competition":"Primera Division","match_date":"2024-09-26T17:00:00Z","home_team":"UD Las Palmas","away_team":"Real Betis Balompié","home_score":1,"away_score":1}
+{"ts":"2026-05-09T23:08:56.258024800Z","ss":"sports-scraper","type":"match","competition":"Primera Division","match_date":"2024-09-30T19:00:00Z","home_team":"Villarreal CF","away_team":"UD Las Palmas","home_score":3,"away_score":1}
+{"ts":"2026-05-09T23:08:56.267025300Z","ss":"sports-scraper","type":"match","competition":"Primera Division","match_date":"2024-10-05T16:30:00Z","home_team":"UD Las Palmas","away_team":"RC Celta de Vigo","home_score":0,"away_score":1}
+{"ts":"2026-05-09T23:08:56.273102900Z","ss":"sports-scraper","type":"match","competition":"Primera Division","match_date":"2024-10-21T19:00:00Z","home_team":"Valencia CF","away_team":"UD Las Palmas","home_score":2,"away_score":3}
+{"ts":"2026-05-09T23:08:56.434770100Z","ss":"sports-scraper","type":"standing","position":1,"team_name":"FC Barcelona","points":88,"played_games":38}
+{"ts":"2026-05-09T23:08:56.446777Z","ss":"sports-scraper","type":"standing","position":2,"team_name":"Real Madrid CF","points":84,"played_games":38}
+{"ts":"2026-05-09T23:08:56.456292Z","ss":"sports-scraper","type":"standing","position":3,"team_name":"Club Atlético de Madrid","points":76,"played_games":38}
+{"ts":"2026-05-09T23:08:56.463289100Z","ss":"sports-scraper","type":"standing","position":4,"team_name":"Athletic Club","points":70,"played_games":38}
+{"ts":"2026-05-09T23:08:56.470289Z","ss":"sports-scraper","type":"standing","position":5,"team_name":"Villarreal CF","points":70,"played_games":38}
+{"ts":"2026-05-09T23:08:56.479291400Z","ss":"sports-scraper","type":"standing","position":6,"team_name":"Real Betis Balompié","points":60,"played_games":38}
+{"ts":"2026-05-09T23:08:56.487290200Z","ss":"sports-scraper","type":"standing","position":7,"team_name":"RC Celta de Vigo","points":55,"played_games":38}
+{"ts":"2026-05-09T23:08:56.495289200Z","ss":"sports-scraper","type":"standing","position":8,"team_name":"CA Osasuna","points":52,"played_games":38}
+{"ts":"2026-05-09T23:08:56.503289700Z","ss":"sports-scraper","type":"standing","position":9,"team_name":"Rayo Vallecano de Madrid","points":52,"played_games":38}
+{"ts":"2026-05-09T23:08:56.510337500Z","ss":"sports-scraper","type":"standing","position":10,"team_name":"RCD Mallorca","points":48,"played_games":38}
+{"ts":"2026-05-09T23:08:56.518490900Z","ss":"sports-scraper","type":"standing","position":11,"team_name":"Valencia CF","points":46,"played_games":38}
+{"ts":"2026-05-09T23:08:56.525107700Z","ss":"sports-scraper","type":"standing","position":12,"team_name":"Real Sociedad de Fútbol","points":46,"played_games":38}
+{"ts":"2026-05-09T23:08:56.531117800Z","ss":"sports-scraper","type":"standing","position":13,"team_name":"Getafe CF","points":42,"played_games":38}
+{"ts":"2026-05-09T23:08:56.537223600Z","ss":"sports-scraper","type":"standing","position":14,"team_name":"Deportivo Alavés","points":42,"played_games":38}
+{"ts":"2026-05-09T23:08:56.544678900Z","ss":"sports-scraper","type":"standing","position":15,"team_name":"RCD Espanyol de Barcelona","points":42,"played_games":38}
+{"ts":"2026-05-09T23:08:56.550459200Z","ss":"sports-scraper","type":"standing","position":16,"team_name":"Sevilla FC","points":41,"played_games":38}
+{"ts":"2026-05-09T23:08:56.556399700Z","ss":"sports-scraper","type":"standing","position":17,"team_name":"Girona FC","points":41,"played_games":38}
+{"ts":"2026-05-09T23:08:56.565540200Z","ss":"sports-scraper","type":"standing","position":18,"team_name":"CD Leganés","points":40,"played_games":38}
+{"ts":"2026-05-09T23:08:56.572547700Z","ss":"sports-scraper","type":"standing","position":19,"team_name":"UD Las Palmas","points":32,"played_games":38}
+{"ts":"2026-05-09T23:08:56.578546900Z","ss":"sports-scraper","type":"standing","position":20,"team_name":"Real Valladolid CF","points":16,"played_games":38}

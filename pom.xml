@@ -11,6 +11,7 @@
     <modules>
         <module>weather-provider</module>
         <module>sports-scraper</module>
+        <module>event-store-builder</module>
     </modules>
 
     <properties>
