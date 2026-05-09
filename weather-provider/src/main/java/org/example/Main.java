@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) {
         SqliteWeatherStore store = new SqliteWeatherStore("weather.db");
         // SUSTITUYE "TU_API_KEY_AQUI" por tu código de OpenWeatherMap
-        WeatherSupplier supplier = new WeatherSupplier("TU_API_KEY_AQUI");
+        WeatherSupplier supplier = new WeatherSupplier("860d63050d134ad7dcfc5c1d57c5f081");
 
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 

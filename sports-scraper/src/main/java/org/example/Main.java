@@ -13,7 +13,7 @@ public class Main {
 
         // SUSTITUYE por tu clave de football-data.org
         // Registro gratuito en: https://www.football-data.org/client/register
-        final String API_KEY = "TU_API_KEY_AQUI";
+        final String API_KEY = "88ed761369f5486497a7631081a403bc";
 
         FootballApiClient client = new FootballApiClient(API_KEY);
         SqliteFootballStore store = new SqliteFootballStore("football.db");
