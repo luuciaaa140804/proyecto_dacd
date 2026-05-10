@@ -8,10 +8,12 @@
     <artifactId>DataScienceProject_Sprint1</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+
     <modules>
         <module>weather-provider</module>
         <module>sports-scraper</module>
         <module>event-store-builder</module>
+        <module>business-unit</module>
     </modules>
 
     <properties>
