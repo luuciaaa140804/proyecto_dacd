@@ -259,4 +259,4 @@ parado.
 
 ## Autores
 
-Lucía — Grado en Ciencia e Ingeniería de Datos, ULPGC
+Lucía Hernández y Amai Suárez— Grado en Ciencia e Ingeniería de Datos, ULPGC
