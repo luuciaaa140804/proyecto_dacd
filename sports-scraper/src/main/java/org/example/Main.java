@@ -1,8 +1,9 @@
 package org.example;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import org.example.model.MatchData;
+import org.example.model.StandingData;
 
+import java.util.List;
 import java.util.concurrent.*;
 
 public class Main {
@@ -17,7 +18,7 @@ public class Main {
         String apiKey = args[0];
 
         FootballApiClient client = new FootballApiClient(apiKey);
-        SqliteFootballStore store = new SqliteFootballStore("football.db");
+        FootballStore store = new SqliteFootballStore("football.db");
         FootballEventPublisher publisher = new FootballEventPublisher();
 
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -29,40 +30,19 @@ public class Main {
 
             // --- 1. Ultimos partidos ---
             try {
-                JsonArray matches = client.getLastMatches(10);
+                List<MatchData> matches = client.getLastMatches(10);
                 System.out.println("  Partidos recibidos: " + matches.size());
 
-                for (int i = 0; i < matches.size(); i++) {
-                    JsonObject match = matches.get(i).getAsJsonObject();
+                for (MatchData m : matches) {
+                    store.insertMatch(m.matchId, m.competition, m.matchDate,
+                            m.homeTeam, m.awayTeam, m.homeScore, m.awayScore, m.status);
 
-                    int matchId        = match.get("id").getAsInt();
-                    String status      = match.get("status").getAsString();
-                    String matchDate   = match.get("utcDate").getAsString();
-                    String competition = match.getAsJsonObject("competition")
-                            .get("name").getAsString();
-                    String homeTeam    = match.getAsJsonObject("homeTeam")
-                            .get("name").getAsString();
-                    String awayTeam    = match.getAsJsonObject("awayTeam")
-                            .get("name").getAsString();
-
-                    JsonObject score = match.getAsJsonObject("score")
-                            .getAsJsonObject("fullTime");
-                    int homeScore = score.get("home").isJsonNull() ? -1
-                            : score.get("home").getAsInt();
-                    int awayScore = score.get("away").isJsonNull() ? -1
-                            : score.get("away").getAsInt();
-
-                    // Guardamos en SQLite (Sprint 1)
-                    store.insertMatch(matchId, competition, matchDate,
-                            homeTeam, awayTeam, homeScore, awayScore, status);
-
-                    // Publicamos en ActiveMQ (Sprint 2)
-                    publisher.publishMatch(competition, matchDate,
-                            homeTeam, awayTeam, homeScore, awayScore);
+                    publisher.publishMatch(m.competition, m.matchDate,
+                            m.homeTeam, m.awayTeam, m.homeScore, m.awayScore);
 
                     System.out.printf("  [Partido] %s vs %s  %d-%d  (%s)%n",
-                            homeTeam, awayTeam, homeScore, awayScore,
-                            matchDate.substring(0, 10));
+                            m.homeTeam, m.awayTeam, m.homeScore, m.awayScore,
+                            m.matchDate.substring(0, 10));
                 }
 
             } catch (Exception e) {
@@ -71,33 +51,19 @@ public class Main {
 
             // --- 2. Clasificacion ---
             try {
-                JsonArray table = client.getStandings();
-                System.out.println("  Equipos en clasificacion: " + table.size());
+                List<StandingData> standings = client.getStandings();
+                System.out.println("  Equipos en clasificacion: " + standings.size());
 
-                for (int i = 0; i < table.size(); i++) {
-                    JsonObject row = table.get(i).getAsJsonObject();
+                for (StandingData s : standings) {
+                    store.insertStanding(s.position, s.teamName, s.played,
+                            s.won, s.draw, s.lost,
+                            s.goalsFor, s.goalsAgainst, s.goalDiff, s.points);
 
-                    int position     = row.get("position").getAsInt();
-                    String teamName  = row.getAsJsonObject("team").get("name").getAsString();
-                    int played       = row.get("playedGames").getAsInt();
-                    int won          = row.get("won").getAsInt();
-                    int draw         = row.get("draw").getAsInt();
-                    int lost         = row.get("lost").getAsInt();
-                    int goalsFor     = row.get("goalsFor").getAsInt();
-                    int goalsAgainst = row.get("goalsAgainst").getAsInt();
-                    int goalDiff     = row.get("goalDifference").getAsInt();
-                    int points       = row.get("points").getAsInt();
+                    publisher.publishStanding(s.position, s.teamName, s.points, s.played);
 
-                    // Guardamos en SQLite (Sprint 1)
-                    store.insertStanding(position, teamName, played, won, draw,
-                            lost, goalsFor, goalsAgainst, goalDiff, points);
-
-                    // Publicamos en ActiveMQ (Sprint 2)
-                    publisher.publishStanding(position, teamName, points, played);
-
-                    if (teamName.contains("Las Palmas")) {
+                    if (s.teamName.contains("Las Palmas")) {
                         System.out.printf("  [Clasificacion] UD Las Palmas -> %do | %d pts | %d PJ%n",
-                                position, points, played);
+                                s.position, s.points, s.played);
                     }
                 }
 

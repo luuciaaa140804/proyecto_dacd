@@ -13,7 +13,7 @@ public class Main {
 
         String apiKey = args[0];
 
-        SqliteWeatherStore store = new SqliteWeatherStore("weather.db");
+        WeatherStore store = new SqliteWeatherStore("weather.db");
         WeatherSupplier supplier = new WeatherSupplier(apiKey);
         WeatherEventPublisher publisher = new WeatherEventPublisher();
 
