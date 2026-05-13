@@ -7,6 +7,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.example.datamart.DatamartRepository;
 import org.example.model.MatchEvent;
 import org.example.model.MatchWeatherReport;
+import org.example.model.StandingEvent;
 import org.example.model.WeatherEvent;
 
 import javax.jms.*;
@@ -82,6 +83,7 @@ public class BusinessUnitSubscriber {
         try {
             JsonObject obj = JsonParser.parseString(json).getAsJsonObject();
             String type = obj.has("type") ? obj.get("type").getAsString() : "";
+
             if ("match".equals(type)) {
                 MatchEvent event = gson.fromJson(obj, MatchEvent.class);
                 if (isLasPalmasMatch(event)) {
@@ -91,7 +93,7 @@ public class BusinessUnitSubscriber {
                     tryGenerateReport("Las Palmas");
                 }
             } else if ("standing".equals(type)) {
-                MatchEvent event = gson.fromJson(obj, MatchEvent.class);
+                StandingEvent event = gson.fromJson(obj, StandingEvent.class);
                 datamart.upsertStanding(event);
             }
         } catch (Exception e) {

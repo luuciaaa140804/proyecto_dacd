@@ -2,6 +2,7 @@ package org.example.datamart;
 
 import org.example.model.MatchEvent;
 import org.example.model.MatchWeatherReport;
+import org.example.model.StandingEvent;
 import org.example.model.WeatherEvent;
 
 import java.sql.*;
@@ -78,6 +79,8 @@ public class DatamartRepository {
         }
     }
 
+    // ── Weather ───────────────────────────────────────────────────────────
+
     public void upsertWeather(WeatherEvent event) {
         String sql = """
             INSERT INTO weather_latest (city, temp, humidity, captured_at)
@@ -122,6 +125,8 @@ public class DatamartRepository {
         return null;
     }
 
+    // ── Matches ───────────────────────────────────────────────────────────
+
     public void insertMatch(MatchEvent event) {
         String sql = """
             INSERT INTO match_history
@@ -157,8 +162,9 @@ public class DatamartRepository {
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
-                return MatchEvent.ofMatch(
+                return new MatchEvent(
                         rs.getString("captured_at"),
+                        "sports-scraper",
                         rs.getString("competition"),
                         rs.getString("match_date"),
                         rs.getString("home_team"),
@@ -184,8 +190,9 @@ public class DatamartRepository {
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                list.add(MatchEvent.ofMatch(
+                list.add(new MatchEvent(
                         rs.getString("captured_at"),
+                        "sports-scraper",
                         rs.getString("competition"),
                         rs.getString("match_date"),
                         rs.getString("home_team"),
@@ -200,7 +207,9 @@ public class DatamartRepository {
         return list;
     }
 
-    public void upsertStanding(MatchEvent event) {
+    // ── Standings ─────────────────────────────────────────────────────────
+
+    public void upsertStanding(StandingEvent event) {
         String sql = """
             INSERT INTO standings (position, team_name, points, played_games, captured_at)
             VALUES (?, ?, ?, ?, ?)
@@ -223,15 +232,16 @@ public class DatamartRepository {
         }
     }
 
-    public List<MatchEvent> getStandings() {
-        List<MatchEvent> list = new ArrayList<>();
+    public List<StandingEvent> getStandings() {
+        List<StandingEvent> list = new ArrayList<>();
         String sql = "SELECT * FROM standings ORDER BY position ASC";
         try (Connection conn = DriverManager.getConnection(dbUrl);
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                list.add(MatchEvent.ofStanding(
+                list.add(new StandingEvent(
                         rs.getString("captured_at"),
+                        "sports-scraper",
                         rs.getInt("position"),
                         rs.getString("team_name"),
                         rs.getInt("points"),
@@ -243,6 +253,8 @@ public class DatamartRepository {
         }
         return list;
     }
+
+    // ── Reports ───────────────────────────────────────────────────────────
 
     public void insertReport(MatchWeatherReport report) {
         String sql = """
@@ -277,22 +289,7 @@ public class DatamartRepository {
         try (Connection conn = DriverManager.getConnection(dbUrl);
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                MatchWeatherReport r = new MatchWeatherReport();
-                r.setMatchDate(rs.getString("match_date"));
-                r.setHomeTeam(rs.getString("home_team"));
-                r.setAwayTeam(rs.getString("away_team"));
-                r.setCompetition(rs.getString("competition"));
-                r.setHomeScore(rs.getInt("home_score"));
-                r.setAwayScore(rs.getInt("away_score"));
-                r.setCity(rs.getString("city"));
-                r.setTemp(rs.getDouble("temp"));
-                r.setHumidity(rs.getInt("humidity"));
-                r.setWeatherCondition(rs.getString("weather_condition"));
-                r.setConditionDetail(rs.getString("condition_detail"));
-                r.setCapturedAt(rs.getString("captured_at"));
-                return r;
-            }
+            if (rs.next()) return buildReport(rs);
         } catch (SQLException e) {
             System.err.println("[Datamart] Error al leer informe: " + e.getMessage());
         }
@@ -305,25 +302,27 @@ public class DatamartRepository {
         try (Connection conn = DriverManager.getConnection(dbUrl);
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                MatchWeatherReport r = new MatchWeatherReport();
-                r.setMatchDate(rs.getString("match_date"));
-                r.setHomeTeam(rs.getString("home_team"));
-                r.setAwayTeam(rs.getString("away_team"));
-                r.setCompetition(rs.getString("competition"));
-                r.setHomeScore(rs.getInt("home_score"));
-                r.setAwayScore(rs.getInt("away_score"));
-                r.setCity(rs.getString("city"));
-                r.setTemp(rs.getDouble("temp"));
-                r.setHumidity(rs.getInt("humidity"));
-                r.setWeatherCondition(rs.getString("weather_condition"));
-                r.setConditionDetail(rs.getString("condition_detail"));
-                r.setCapturedAt(rs.getString("captured_at"));
-                list.add(r);
-            }
+            while (rs.next()) list.add(buildReport(rs));
         } catch (SQLException e) {
             System.err.println("[Datamart] Error al leer informes: " + e.getMessage());
         }
         return list;
+    }
+
+    private MatchWeatherReport buildReport(ResultSet rs) throws SQLException {
+        MatchWeatherReport r = new MatchWeatherReport();
+        r.setMatchDate(rs.getString("match_date"));
+        r.setHomeTeam(rs.getString("home_team"));
+        r.setAwayTeam(rs.getString("away_team"));
+        r.setCompetition(rs.getString("competition"));
+        r.setHomeScore(rs.getInt("home_score"));
+        r.setAwayScore(rs.getInt("away_score"));
+        r.setCity(rs.getString("city"));
+        r.setTemp(rs.getDouble("temp"));
+        r.setHumidity(rs.getInt("humidity"));
+        r.setWeatherCondition(rs.getString("weather_condition"));
+        r.setConditionDetail(rs.getString("condition_detail"));
+        r.setCapturedAt(rs.getString("captured_at"));
+        return r;
     }
 }

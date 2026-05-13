@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.example.datamart.DatamartRepository;
 import org.example.model.MatchEvent;
+import org.example.model.StandingEvent;
 import org.example.model.WeatherEvent;
 
 import java.io.BufferedReader;
@@ -39,12 +40,10 @@ public class EventStoreReader {
             System.out.println("[EventStoreReader] No se encontró directorio Weather: " + dir);
             return 0;
         }
-        List<String> lines = readAllLines(dir);
         int count = 0;
-        for (String line : lines) {
+        for (String line : readAllLines(dir)) {
             try {
-                JsonObject json = JsonParser.parseString(line).getAsJsonObject();
-                WeatherEvent event = gson.fromJson(json, WeatherEvent.class);
+                WeatherEvent event = gson.fromJson(line, WeatherEvent.class);
                 if (event.getCity() != null) {
                     datamart.upsertWeather(event);
                     count++;
@@ -63,12 +62,12 @@ public class EventStoreReader {
             System.out.println("[EventStoreReader] No se encontró directorio Football: " + dir);
             return 0;
         }
-        List<String> lines = readAllLines(dir);
         int count = 0;
-        for (String line : lines) {
+        for (String line : readAllLines(dir)) {
             try {
                 JsonObject json = JsonParser.parseString(line).getAsJsonObject();
                 String type = json.has("type") ? json.get("type").getAsString() : "";
+
                 if ("match".equals(type)) {
                     MatchEvent event = gson.fromJson(json, MatchEvent.class);
                     if (isLasPalmasMatch(event)) {
@@ -76,7 +75,7 @@ public class EventStoreReader {
                         count++;
                     }
                 } else if ("standing".equals(type)) {
-                    MatchEvent event = gson.fromJson(json, MatchEvent.class);
+                    StandingEvent event = gson.fromJson(json, StandingEvent.class);
                     datamart.upsertStanding(event);
                     count++;
                 }
@@ -95,9 +94,7 @@ public class EventStoreReader {
             Files.walkFileTree(directory, new SimpleFileVisitor<>() {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                    if (file.toString().endsWith(".events")) {
-                        files.add(file);
-                    }
+                    if (file.toString().endsWith(".events")) files.add(file);
                     return FileVisitResult.CONTINUE;
                 }
             });
