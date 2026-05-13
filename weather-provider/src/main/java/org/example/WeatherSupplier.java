@@ -6,7 +6,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class WeatherSupplier {
+public class WeatherSupplier implements WeatherProvider {
     private final String apiKey;
     private final OkHttpClient client;
 

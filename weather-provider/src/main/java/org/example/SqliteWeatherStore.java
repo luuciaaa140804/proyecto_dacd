@@ -3,7 +3,7 @@ package org.example;
 import java.sql.*;
 import java.time.Instant;
 
-public class SqliteWeatherStore {
+public class SqliteWeatherStore implements WeatherStore {
     private final String dbPath;
 
     public SqliteWeatherStore(String dbName) {

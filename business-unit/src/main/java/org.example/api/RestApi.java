@@ -5,6 +5,7 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 import org.example.datamart.DatamartRepository;
 import org.example.model.MatchEvent;
+import org.example.model.StandingEvent;
 import org.example.model.MatchWeatherReport;
 import org.example.model.WeatherEvent;
 
@@ -151,7 +152,7 @@ public class RestApi {
      * Devuelve la clasificación actual de LaLiga.
      */
     private void getStandings(Context ctx) {
-        List<MatchEvent> standings = datamart.getStandings();
+        List<StandingEvent> standings = datamart.getStandings();
 
         if (standings.isEmpty()) {
             ctx.status(404).json(Map.of(

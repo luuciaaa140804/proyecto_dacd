@@ -3,7 +3,7 @@ package org.example;
 import java.sql.*;
 import java.time.Instant;
 
-public class SqliteFootballStore {
+public class SqliteFootballStore implements FootballStore {
 
     private final String dbPath;
 
