@@ -3,17 +3,20 @@ package org.example;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        final String API_KEY = "88ed761369f5486497a7631081a403bc";
+        if (args.length < 1) {
+            System.err.println("Uso: java -jar sports-scraper.jar <FOOTBALLDATA_API_KEY>");
+            System.exit(1);
+        }
 
-        FootballApiClient client = new FootballApiClient(API_KEY);
+        String apiKey = args[0];
+
+        FootballApiClient client = new FootballApiClient(apiKey);
         SqliteFootballStore store = new SqliteFootballStore("football.db");
         FootballEventPublisher publisher = new FootballEventPublisher();
 
@@ -74,16 +77,16 @@ public class Main {
                 for (int i = 0; i < table.size(); i++) {
                     JsonObject row = table.get(i).getAsJsonObject();
 
-                    int position      = row.get("position").getAsInt();
-                    String teamName   = row.getAsJsonObject("team").get("name").getAsString();
-                    int played        = row.get("playedGames").getAsInt();
-                    int won           = row.get("won").getAsInt();
-                    int draw          = row.get("draw").getAsInt();
-                    int lost          = row.get("lost").getAsInt();
-                    int goalsFor      = row.get("goalsFor").getAsInt();
-                    int goalsAgainst  = row.get("goalsAgainst").getAsInt();
-                    int goalDiff      = row.get("goalDifference").getAsInt();
-                    int points        = row.get("points").getAsInt();
+                    int position     = row.get("position").getAsInt();
+                    String teamName  = row.getAsJsonObject("team").get("name").getAsString();
+                    int played       = row.get("playedGames").getAsInt();
+                    int won          = row.get("won").getAsInt();
+                    int draw         = row.get("draw").getAsInt();
+                    int lost         = row.get("lost").getAsInt();
+                    int goalsFor     = row.get("goalsFor").getAsInt();
+                    int goalsAgainst = row.get("goalsAgainst").getAsInt();
+                    int goalDiff     = row.get("goalDifference").getAsInt();
+                    int points       = row.get("points").getAsInt();
 
                     // Guardamos en SQLite (Sprint 1)
                     store.insertStanding(position, teamName, played, won, draw,

@@ -1,14 +1,20 @@
 package org.example;
 
-import com.google.gson.JsonObject;
 import java.util.concurrent.*;
 
 public class Main {
 
     public static void main(String[] args) throws Exception {
 
+        if (args.length < 1) {
+            System.err.println("Uso: java -jar weather-provider.jar <OPENWEATHER_API_KEY>");
+            System.exit(1);
+        }
+
+        String apiKey = args[0];
+
         SqliteWeatherStore store = new SqliteWeatherStore("weather.db");
-        WeatherSupplier supplier = new WeatherSupplier("860d63050d134ad7dcfc5c1d57c5f081");
+        WeatherSupplier supplier = new WeatherSupplier(apiKey);
         WeatherEventPublisher publisher = new WeatherEventPublisher();
 
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -18,10 +24,10 @@ public class Main {
         scheduler.scheduleAtFixedRate(() -> {
             try {
                 String city = "Las Palmas";
-                JsonObject data = supplier.getSelectedData(city);
+                var data = supplier.getSelectedData(city);
 
-                double temp     = data.getAsJsonObject("main").get("temp").getAsDouble();
-                int humidity    = data.getAsJsonObject("main").get("humidity").getAsInt();
+                double temp  = data.getAsJsonObject("main").get("temp").getAsDouble();
+                int humidity = data.getAsJsonObject("main").get("humidity").getAsInt();
 
                 // Guardamos en SQLite (Sprint 1)
                 store.insertWeather(city, temp, humidity);
