@@ -36,3 +36,12 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# Bases de datos
+*.db
+
+# Logs
+logs/
+
+# Event store (datos generados en ejecución)
+eventstore/
