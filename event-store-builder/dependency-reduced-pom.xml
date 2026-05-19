@@ -6,7 +6,7 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>business-unit</artifactId>
+  <artifactId>event-store-builder</artifactId>
   <build>
     <plugins>
       <plugin>
@@ -45,7 +45,7 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.10.2</version>
+      <version>5.10.0</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>

@@ -31,6 +31,7 @@ public class DatamartRepository {
                 )
             """);
 
+            // CAMBIO 1: añadida constraint UNIQUE(match_date, home_team, away_team)
             stmt.execute("""
                 CREATE TABLE IF NOT EXISTS match_history (
                     id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -40,7 +41,8 @@ public class DatamartRepository {
                     away_team   TEXT,
                     home_score  INTEGER,
                     away_score  INTEGER,
-                    captured_at TEXT
+                    captured_at TEXT,
+                    UNIQUE(match_date, home_team, away_team)
                 )
             """);
 
@@ -128,8 +130,9 @@ public class DatamartRepository {
     // ── Matches ───────────────────────────────────────────────────────────
 
     public void insertMatch(MatchEvent event) {
+        // CAMBIO 2: INSERT OR IGNORE para evitar duplicados
         String sql = """
-            INSERT INTO match_history
+            INSERT OR IGNORE INTO match_history
                 (competition, match_date, home_team, away_team,
                  home_score, away_score, captured_at)
             VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -155,7 +158,7 @@ public class DatamartRepository {
         String sql = """
             SELECT * FROM match_history
             WHERE home_team LIKE '%Las Palmas%' OR away_team LIKE '%Las Palmas%'
-            ORDER BY captured_at DESC
+            ORDER BY match_date DESC
             LIMIT 1
         """;
         try (Connection conn = DriverManager.getConnection(dbUrl);

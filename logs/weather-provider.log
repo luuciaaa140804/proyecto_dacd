@@ -1,0 +1,2 @@
+2026-05-19 21:44:37 [INFO ] WeatherEventPublisher - Conectado a ActiveMQ en tcp://localhost:61616
+2026-05-19 21:44:37 [INFO ] WeatherEventPublisher - Evento publicado → ciudad=Las Palmas temp=18.44°C humedad=68%
