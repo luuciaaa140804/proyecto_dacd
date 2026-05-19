@@ -3,6 +3,8 @@ package org.example;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jms.*;
 import java.io.FileWriter;
@@ -16,6 +18,8 @@ import java.time.format.DateTimeFormatter;
 
 public class EventStoreBuilder {
 
+    private static final Logger logger = LoggerFactory.getLogger(EventStoreBuilder.class);
+
     private static final String BROKER_URL = "tcp://localhost:61616";
     private static final String CLIENT_ID  = "event-store-builder";
 
@@ -28,17 +32,11 @@ public class EventStoreBuilder {
         connection.setClientID(CLIENT_ID);
         connection.start();
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        System.out.println("[EventStoreBuilder] Conectado a ActiveMQ.");
+        logger.info("Conectado a ActiveMQ en {}", BROKER_URL);
     }
 
-    /**
-     * Se suscribe de forma durable a un topic y guarda cada evento en el fichero correspondiente.
-     * @param topicName nombre del topic (p.ej. "Weather" o "Football")
-     * @param ss        identificador de la fuente (p.ej. "weather-provider" o "sports-scraper")
-     */
     public void subscribeTo(String topicName, String ss) throws JMSException {
         Topic topic = session.createTopic(topicName);
-        // Suscripción durable: si el builder se cae, al volver recupera los mensajes perdidos
         MessageConsumer consumer = session.createDurableSubscriber(topic, topicName + "-" + ss);
 
         consumer.setMessageListener(message -> {
@@ -48,45 +46,39 @@ public class EventStoreBuilder {
                     saveEvent(topicName, ss, json);
                 }
             } catch (JMSException e) {
-                System.err.println("[EventStoreBuilder] Error al leer mensaje: " + e.getMessage());
+                logger.error("Error al leer mensaje del topic {}: {}", topicName, e.getMessage());
             }
         });
 
-        System.out.println("[EventStoreBuilder] Suscrito al topic: " + topicName);
+        logger.info("Suscrito (durable) al topic: {}", topicName);
     }
 
-    /**
-     * Guarda el evento en el fichero correcto según la estructura:
-     * eventstore/{topic}/{ss}/{YYYYMMDD}.events
-     */
     private void saveEvent(String topic, String ss, String json) {
         try {
-            // Extraemos el timestamp del evento para calcular la fecha del fichero
             JsonObject event = JsonParser.parseString(json).getAsJsonObject();
             String ts = event.has("ts") ? event.get("ts").getAsString() : Instant.now().toString();
 
             String date = DateTimeFormatter.ofPattern("yyyyMMdd")
                     .format(Instant.parse(ts).atZone(ZoneOffset.UTC));
 
-            // Creamos el directorio si no existe
             Path dir = Paths.get("eventstore", topic, ss);
             Files.createDirectories(dir);
 
-            // Añadimos el evento al fichero (una línea por evento)
             Path file = dir.resolve(date + ".events");
             try (FileWriter fw = new FileWriter(file.toFile(), true)) {
                 fw.write(json + "\n");
             }
 
-            System.out.println("[EventStoreBuilder] Evento guardado en: " + file);
+            logger.info("Evento guardado en: {}", file);
 
         } catch (IOException e) {
-            System.err.println("[EventStoreBuilder] Error al guardar evento: " + e.getMessage());
+            logger.error("Error al guardar evento: {}", e.getMessage());
         }
     }
 
     public void close() throws JMSException {
         session.close();
         connection.close();
+        logger.info("Conexión con ActiveMQ cerrada.");
     }
 }

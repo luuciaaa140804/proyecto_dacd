@@ -2,10 +2,14 @@ package org.example;
 
 import com.google.gson.JsonObject;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.jms.*;
 
 public class WeatherEventPublisher {
+
+    private static final Logger logger = LoggerFactory.getLogger(WeatherEventPublisher.class);
 
     private static final String BROKER_URL = "tcp://localhost:61616";
     private static final String TOPIC_NAME = "Weather";
@@ -21,16 +25,9 @@ public class WeatherEventPublisher {
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         Topic topic = session.createTopic(TOPIC_NAME);
         producer = session.createProducer(topic);
-        System.out.println("[WeatherPublisher] Conectado a ActiveMQ.");
+        logger.info("Conectado a ActiveMQ en {}", BROKER_URL);
     }
 
-    /**
-     * Publica un evento de clima en el topic Weather.
-     * Estructura mínima requerida por el enunciado:
-     *   ts: timestamp UTC de la captura
-     *   ss: identificador de la fuente
-     *   + payload con los datos del clima
-     */
     public void publish(String city, double temp, int humidity) throws JMSException {
         JsonObject event = new JsonObject();
         event.addProperty("ts", java.time.Instant.now().toString());
@@ -41,11 +38,12 @@ public class WeatherEventPublisher {
 
         TextMessage message = session.createTextMessage(event.toString());
         producer.send(message);
-        System.out.println("[WeatherPublisher] Evento publicado: " + event);
+        logger.info("Evento publicado → ciudad={} temp={}°C humedad={}%", city, temp, humidity);
     }
 
     public void close() throws JMSException {
         session.close();
         connection.close();
+        logger.info("Conexión con ActiveMQ cerrada.");
     }
 }
