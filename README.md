@@ -1,6 +1,6 @@
 # Proyecto DACD — UD Las Palmas Weather & Football Analyser
 
-**Grado en Ciencia e Ingeniería de Datos · ULPGC**
+**Grado en Ciencia e Ingeniería de Datos · ULPGC**  
 **Asignatura: Desarrollo de Aplicaciones para Ciencia de Datos**
 
 ---
@@ -40,15 +40,19 @@ El proyecto sigue una **arquitectura Lambda** con tres capas:
                     │
          ┌──────────┴──────────┐
          ▼                     ▼
-┌─────────────────┐   ┌─────────────────────┐
-│event-store-builder│  │   business-unit      │
+┌─────────────────┐   ┌──────────────────────┐
+│event-store-build│   │    business-unit      │
 │  (.events files)│   │  (datamart + REST API)│
-└─────────────────┘   └─────────────────────┘
+└─────────────────┘   └──────────────────────┘
 ```
 
 El **event-store-builder** persiste todos los eventos en ficheros NDJSON organizados por
 fecha. El **business-unit** se suscribe en tiempo real al broker y, al arrancar, carga
 también los eventos históricos del event store para reconstruir el datamart.
+
+### Diagrama de clases
+
+![Diagrama de clases](class_diagram_proyecto_dacd.jpg)
 
 ---
 
@@ -66,16 +70,91 @@ también los eventos históricos del event store para reconstruir el datamart.
 ## Fuentes de datos
 
 ### OpenWeatherMap API
+
 - **URL:** `https://openweathermap.org/api`
 - **Dato capturado:** temperatura (°C) y humedad (%) de Las Palmas de Gran Canaria
 - **Frecuencia:** cada hora
 - **Topic ActiveMQ:** `Weather`
 
 ### football-data.org API
+
 - **URL:** `https://www.football-data.org`
 - **Dato capturado:** partidos de la UD Las Palmas en LaLiga 2024/25 y clasificación
 - **Frecuencia:** cada hora
 - **Topic ActiveMQ:** `Football`
+
+---
+
+## Justificación de la elección de APIs
+
+### OpenWeatherMap
+
+Se eligió esta API por su gratuidad, su amplia documentación y la variabilidad temporal
+de sus datos (temperatura y humedad cambian cada hora), lo que la hace ideal para
+capturas periódicas. Además, ofrece datos para cualquier ciudad del mundo, permitiendo
+centrar el análisis en Las Palmas de Gran Canaria de forma directa.
+
+### football-data.org
+
+Se eligió esta API porque proporciona datos estructurados y actualizados de LaLiga,
+incluyendo partidos y clasificación, sin necesidad de scraping frágil sobre HTML.
+La combinación con datos meteorológicos tiene una propuesta de valor clara: analizar
+si las condiciones climáticas en Las Palmas correlacionan con el rendimiento local
+de la UD Las Palmas.
+
+### Justificación del datamart
+
+El datamart se implementa en SQLite porque es ligero, no requiere servidor externo y
+es suficiente para el volumen de datos manejado. Se diseñaron cuatro tablas:
+
+- `weather_latest`: upsert del clima actual, para consultas rápidas del estado presente.
+- `match_history`: historial acumulativo de partidos de la UD Las Palmas.
+- `standings`: clasificación actualizada de LaLiga (upsert por posición).
+- `match_weather_report`: informes combinados generados automáticamente al cruzar un partido con el clima capturado en ese momento, núcleo de la propuesta de valor.
+
+---
+
+## Principios y patrones de diseño
+
+### Patrón Publisher/Subscriber (Sprint 2 y 3)
+
+Los módulos `weather-provider` y `sports-scraper` actúan como **publishers**: publican
+eventos JSON en topics de ActiveMQ (`Weather` y `Football`) sin conocer quién los consume.
+El `event-store-builder` y el `business-unit` actúan como **subscribers** desacoplados,
+procesando los eventos de forma independiente. Este desacoplamiento permite añadir nuevos
+consumidores sin modificar los feeders.
+
+### Patrón Repository
+
+Cada módulo de persistencia implementa una interfaz (`WeatherStore`, `FootballStore`,
+`DatamartRepository`) que abstrae el acceso a datos. Las clases concretas
+(`SqliteWeatherStore`, `SqliteFootballStore`) implementan esa interfaz, de forma que
+el resto del código depende de la abstracción y no de la implementación concreta.
+Esto facilita sustituir SQLite por otro motor sin tocar la lógica de negocio.
+
+### Principio de segregación de interfaces (ISP)
+
+Las interfaces están diseñadas con responsabilidades mínimas y específicas:
+`WeatherStore` solo define operaciones de clima, `FootballStore` solo de fútbol,
+y `WeatherProvider` solo la obtención de datos externos. Ninguna clase implementa
+métodos que no necesita.
+
+### Principio de responsabilidad única (SRP)
+
+Cada clase tiene una única razón para cambiar:
+
+- `WeatherSupplier`: solo obtiene datos de la API externa.
+- `WeatherEventPublisher`: solo publica eventos en ActiveMQ.
+- `SqliteWeatherStore`: solo persiste datos en SQLite.
+- `EventStoreBuilder`: solo almacena eventos en ficheros NDJSON.
+- `RestApi`: solo gestiona los endpoints HTTP.
+
+### Arquitectura Lambda
+
+El sistema sigue una arquitectura Lambda con dos capas de procesamiento:
+
+- **Capa de velocidad**: `business-unit` consume eventos en tiempo real desde ActiveMQ y actualiza el datamart inmediatamente.
+- **Capa de lote**: al arrancar, `business-unit` lee los ficheros `.events` históricos del event store para reconstruir el datamart, garantizando coherencia aunque el proceso haya estado parado.
 
 ---
 
@@ -93,8 +172,9 @@ eventstore/
         └── 20260510.events
 ```
 
-Cada fichero `.events` contiene un evento JSON por línea (formato NDJSON). Ejemplo de
-evento de clima:
+Cada fichero `.events` contiene un evento JSON por línea (formato NDJSON).
+
+Ejemplo de evento de clima:
 
 ```json
 {"ts":"2026-05-09T10:00:00Z","ss":"weather-provider","city":"Las Palmas","temp":22.4,"humidity":68}
@@ -166,7 +246,7 @@ bin/activemq start
 bin\activemq.bat start
 ```
 
-Verificar en el panel de administración: `http://localhost:8161`
+Verificar en el panel de administración: `http://localhost:8161`  
 (usuario: `admin`, contraseña: `admin`)
 
 ### 2. Compilar el proyecto
@@ -243,6 +323,35 @@ parado.
 
 ---
 
+## Datos de ejemplo
+
+### Muestra del Event Store
+
+Fichero `eventstore/Weather/weather-provider/20260509.events`:
+
+```json
+{"ts":"2026-05-09T10:00:00Z","ss":"weather-provider","city":"Las Palmas","temp":22.4,"humidity":68}
+{"ts":"2026-05-09T11:00:00Z","ss":"weather-provider","city":"Las Palmas","temp":23.1,"humidity":65}
+{"ts":"2026-05-09T12:00:00Z","ss":"weather-provider","city":"Las Palmas","temp":24.0,"humidity":61}
+```
+
+Fichero `eventstore/Football/sports-scraper/20260509.events`:
+
+```json
+{"ts":"2026-05-09T10:00:00Z","ss":"sports-scraper","type":"match","competition":"Primera Division","match_date":"2024-10-21T19:00:00Z","home_team":"UD Las Palmas","away_team":"Valencia CF","home_score":3,"away_score":2}
+{"ts":"2026-05-09T10:00:00Z","ss":"sports-scraper","type":"standing","position":1,"team_name":"FC Barcelona","points":88,"played_games":38}
+{"ts":"2026-05-09T10:00:00Z","ss":"sports-scraper","type":"standing","position":18,"team_name":"UD Las Palmas","points":31,"played_games":38}
+```
+
+### Muestra del Datamart (tabla `match_weather_report`)
+
+| match_date | home_team | away_team | home_score | away_score | temp_c | humidity | condition |
+|---|---|---|---|---|---|---|---|
+| 2024-10-21 | UD Las Palmas | Valencia CF | 3 | 2 | 18.4 | 73 | FAVORABLE |
+| 2024-10-05 | RC Celta de Vigo | UD Las Palmas | 1 | 0 | 17.2 | 80 | FAVORABLE |
+
+---
+
 ## Tecnologías utilizadas
 
 | Tecnología | Uso |
@@ -259,4 +368,4 @@ parado.
 
 ## Autores
 
-Lucía Hernández y Amai Suárez— Grado en Ciencia e Ingeniería de Datos, ULPGC
+Lucía Hernández y Amai Suárez — Grado en Ciencia e Ingeniería de Datos, ULPGC
