@@ -17,7 +17,10 @@ climáticas en los partidos del equipo.
 Dado un partido de la UD Las Palmas, el sistema responde: *¿qué condiciones
 climáticas había en Las Palmas en el momento de ese partido?* Esto permite analizar
 si el clima local puede correlacionarse con el rendimiento del equipo como local, y
-sirve como base para estudios más completos en iteraciones futuras.
+sirve como base para estudios más completos en iteraciones futuras. Para cuantificar
+esta relación, el sistema calcula el **índice de correlación de Pearson** entre la
+temperatura y los goles marcados por Las Palmas, aportando un análisis estadístico
+real sobre el impacto del clima en el rendimiento del equipo.
 
 ---
 
@@ -110,7 +113,7 @@ es suficiente para el volumen de datos manejado. Se diseñaron cuatro tablas:
 - `weather_latest`: upsert del clima actual, para consultas rápidas del estado presente.
 - `match_history`: historial acumulativo de partidos de la UD Las Palmas.
 - `standings`: clasificación actualizada de LaLiga (upsert por posición).
-- `match_weather_report`: informes combinados generados automáticamente al cruzar un partido con el clima capturado en ese momento, núcleo de la propuesta de valor.
+- `match_weather_report`: informes combinados generados automáticamente al cruzar un partido con el clima capturado en ese momento, núcleo de la propuesta de valor. Esta tabla es además la fuente de datos para el cálculo del índice de correlación de Pearson.
 
 ---
 
@@ -198,6 +201,7 @@ siguientes endpoints:
 | GET | `/` | Listado de endpoints disponibles |
 | GET | `/report/laspalmas` | Informe combinado: último partido + clima en ese momento |
 | GET | `/report/history` | Historial completo de informes generados |
+| GET | `/report/correlation` | Correlación de Pearson entre temperatura y goles de Las Palmas |
 | GET | `/standings` | Clasificación actual de LaLiga |
 | GET | `/weather/current` | Último dato de clima capturado para Las Palmas |
 | GET | `/matches/laspalmas` | Historial de partidos de la UD Las Palmas |
@@ -223,6 +227,18 @@ siguientes endpoints:
     "detalle": "Temperatura agradable y humedad moderada"
   },
   "generado_en": "2026-05-09T10:05:00Z"
+}
+```
+
+### Ejemplo de respuesta — `/report/correlation`
+
+```json
+{
+  "indice_pearson": 0.73,
+  "interpretacion": "Correlación positiva fuerte: a mayor temperatura, más goles marca Las Palmas.",
+  "variable_x": "temperatura (°C)",
+  "variable_y": "goles de UD Las Palmas",
+  "partidos_analizados": 8
 }
 ```
 
@@ -291,6 +307,9 @@ java -jar target/business-unit-1.0-SNAPSHOT.jar
 # Informe más reciente
 curl http://localhost:7000/report/laspalmas
 
+# Correlación de Pearson temperatura vs goles
+curl http://localhost:7000/report/correlation
+
 # Clasificación de LaLiga
 curl http://localhost:7000/standings
 
@@ -314,7 +333,7 @@ El datamart se implementa en **SQLite** (`datamart.db`) con cuatro tablas:
 | `weather_latest` | Último dato de clima por ciudad (upsert) |
 | `match_history` | Historial de partidos de la UD Las Palmas |
 | `standings` | Clasificación actual de LaLiga (upsert por posición) |
-| `match_weather_report` | Informes combinados partido + clima generados automáticamente |
+| `match_weather_report` | Informes combinados partido + clima, base para el cálculo de correlación de Pearson |
 
 La estrategia de reconstrucción al arrancar consiste en leer todos los ficheros
 `.events` del event store e insertarlos en el datamart antes de comenzar la
