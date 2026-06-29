@@ -8,6 +8,7 @@ import org.example.model.WeatherEvent;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DatamartRepository {
 
@@ -31,7 +32,6 @@ public class DatamartRepository {
                 )
             """);
 
-            // CAMBIO 1: añadida constraint UNIQUE(match_date, home_team, away_team)
             stmt.execute("""
                 CREATE TABLE IF NOT EXISTS match_history (
                     id          INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -130,7 +130,6 @@ public class DatamartRepository {
     // ── Matches ───────────────────────────────────────────────────────────
 
     public void insertMatch(MatchEvent event) {
-        // CAMBIO 2: INSERT OR IGNORE para evitar duplicados
         String sql = """
             INSERT OR IGNORE INTO match_history
                 (competition, match_date, home_team, away_team,
@@ -327,5 +326,85 @@ public class DatamartRepository {
         r.setConditionDetail(rs.getString("condition_detail"));
         r.setCapturedAt(rs.getString("captured_at"));
         return r;
+    }
+
+    // ── Correlación de Pearson ────────────────────────────────────────────
+
+    public Map<String, Object> getPearsonCorrelation() {
+        String sql = """
+            SELECT temp, home_score, away_score, home_team
+            FROM match_weather_report
+        """;
+
+        List<Double> temps = new ArrayList<>();
+        List<Double> goals = new ArrayList<>();
+
+        try (Connection conn = DriverManager.getConnection(dbUrl);
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                double temp = rs.getDouble("temp");
+                int homeScore = rs.getInt("home_score");
+                int awayScore = rs.getInt("away_score");
+                String homeTeam = rs.getString("home_team");
+
+                double lasPalmasGoals = homeTeam.contains("Las Palmas") ? homeScore : awayScore;
+
+                temps.add(temp);
+                goals.add(lasPalmasGoals);
+            }
+        } catch (SQLException e) {
+            System.err.println("[Datamart] Error al calcular correlación: " + e.getMessage());
+        }
+
+        if (temps.size() < 2) {
+            return Map.of(
+                    "error", "No hay suficientes datos para calcular la correlación.",
+                    "partidos_analizados", temps.size()
+            );
+        }
+
+        double pearson = calcularPearson(temps, goals);
+        String interpretacion = interpretarPearson(pearson);
+
+        return Map.of(
+                "indice_pearson", Math.round(pearson * 1000.0) / 1000.0,
+                "interpretacion", interpretacion,
+                "variable_x", "temperatura (°C)",
+                "variable_y", "goles de UD Las Palmas",
+                "partidos_analizados", temps.size()
+        );
+    }
+
+    private double calcularPearson(List<Double> x, List<Double> y) {
+        int n = x.size();
+        double mediaX = x.stream().mapToDouble(Double::doubleValue).average().orElse(0);
+        double mediaY = y.stream().mapToDouble(Double::doubleValue).average().orElse(0);
+
+        double numerador = 0;
+        double denomX = 0;
+        double denomY = 0;
+
+        for (int i = 0; i < n; i++) {
+            double dx = x.get(i) - mediaX;
+            double dy = y.get(i) - mediaY;
+            numerador += dx * dy;
+            denomX += dx * dx;
+            denomY += dy * dy;
+        }
+
+        double denominador = Math.sqrt(denomX * denomY);
+        return denominador == 0 ? 0 : numerador / denominador;
+    }
+
+    private String interpretarPearson(double r) {
+        if (r >= 0.7)  return "Correlación positiva fuerte: a mayor temperatura, más goles marca Las Palmas.";
+        if (r >= 0.4)  return "Correlación positiva moderada: la temperatura parece favorecer el rendimiento.";
+        if (r >= 0.1)  return "Correlación positiva débil: ligera tendencia pero no concluyente.";
+        if (r > -0.1)  return "Sin correlación apreciable entre temperatura y goles.";
+        if (r > -0.4)  return "Correlación negativa débil: ligera tendencia a menos goles con más calor.";
+        if (r > -0.7)  return "Correlación negativa moderada: el calor parece perjudicar el rendimiento.";
+        return "Correlación negativa fuerte: a mayor temperatura, menos goles marca Las Palmas.";
     }
 }

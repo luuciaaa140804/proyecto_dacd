@@ -19,6 +19,7 @@ import java.util.Map;
  *
  *   GET /report/laspalmas       → Informe clima + último partido de UD Las Palmas
  *   GET /report/history         → Todos los informes generados
+ *   GET /report/correlation     → Correlación de Pearson temperatura vs goles
  *   GET /standings              → Clasificación actual de LaLiga
  *   GET /weather/current        → Último dato de clima capturado para Las Palmas
  *   GET /matches/laspalmas      → Historial de partidos de Las Palmas
@@ -43,11 +44,12 @@ public class RestApi {
 
         System.out.println("[RestApi] Servidor iniciado en http://localhost:" + port);
         System.out.println("[RestApi] Endpoints disponibles:");
-        System.out.println("  GET /report/laspalmas  → Informe clima + partido");
-        System.out.println("  GET /report/history    → Historial de informes");
-        System.out.println("  GET /standings         → Clasificación LaLiga");
-        System.out.println("  GET /weather/current   → Clima actual Las Palmas");
-        System.out.println("  GET /matches/laspalmas → Partidos de Las Palmas");
+        System.out.println("  GET /report/laspalmas   → Informe clima + partido");
+        System.out.println("  GET /report/history     → Historial de informes");
+        System.out.println("  GET /report/correlation → Correlación Pearson temperatura vs goles");
+        System.out.println("  GET /standings          → Clasificación LaLiga");
+        System.out.println("  GET /weather/current    → Clima actual Las Palmas");
+        System.out.println("  GET /matches/laspalmas  → Partidos de Las Palmas");
     }
 
     // ── Registro de rutas ──────────────────────────────────────────────────
@@ -59,11 +61,12 @@ public class RestApi {
             ctx.json(Map.of(
                     "service", "Business Unit - UD Las Palmas",
                     "endpoints", List.of(
-                            "GET /report/laspalmas  - Informe clima + último partido",
-                            "GET /report/history    - Historial de informes",
-                            "GET /standings         - Clasificación LaLiga",
-                            "GET /weather/current   - Clima actual en Las Palmas",
-                            "GET /matches/laspalmas - Partidos de Las Palmas"
+                            "GET /report/laspalmas   - Informe clima + último partido",
+                            "GET /report/history     - Historial de informes",
+                            "GET /report/correlation - Correlación Pearson temperatura vs goles",
+                            "GET /standings          - Clasificación LaLiga",
+                            "GET /weather/current    - Clima actual en Las Palmas",
+                            "GET /matches/laspalmas  - Partidos de Las Palmas"
                     )
             ));
         });
@@ -73,6 +76,9 @@ public class RestApi {
 
         // Historial de todos los informes
         app.get("/report/history", this::getReportHistory);
+
+        // Correlación de Pearson temperatura vs goles
+        app.get("/report/correlation", this::getCorrelation);
 
         // Clasificación de LaLiga
         app.get("/standings", this::getStandings);
@@ -148,6 +154,14 @@ public class RestApi {
     }
 
     /**
+     * GET /report/correlation
+     * Calcula la correlación de Pearson entre temperatura y goles de Las Palmas.
+     */
+    private void getCorrelation(Context ctx) {
+        ctx.json(datamart.getPearsonCorrelation());
+    }
+
+    /**
      * GET /standings
      * Devuelve la clasificación actual de LaLiga.
      */
@@ -188,10 +202,10 @@ public class RestApi {
         }
 
         ctx.json(Map.of(
-                "ciudad",       weather.getCity(),
-                "temperatura_c",weather.getTemp(),
-                "humedad_%",    weather.getHumidity(),
-                "capturado_en", weather.getTs()
+                "ciudad",        weather.getCity(),
+                "temperatura_c", weather.getTemp(),
+                "humedad_%",     weather.getHumidity(),
+                "capturado_en",  weather.getTs()
         ));
     }
 
