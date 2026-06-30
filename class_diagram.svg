@@ -1,0 +1,671 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2200 1500" width="2200" height="1500" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+
+<defs>
+  <marker id="arrOpen" markerWidth="12" markerHeight="10" refX="10" refY="5" orient="auto">
+    <path d="M1,1 L10,5 L1,9" fill="none" stroke="#444" stroke-width="1"/>
+  </marker>
+  <marker id="arrImpl" markerWidth="12" markerHeight="10" refX="10" refY="5" orient="auto">
+    <path d="M1,1 L10,5 L1,9 Z" fill="white" stroke="#444" stroke-width="1"/>
+  </marker>
+  <marker id="arrDiamond" markerWidth="16" markerHeight="10" refX="14" refY="5" orient="auto">
+    <path d="M1,5 L8,1 L15,5 L8,9 Z" fill="white" stroke="#444" stroke-width="1"/>
+  </marker>
+  <marker id="arrMsg" markerWidth="12" markerHeight="10" refX="10" refY="5" orient="auto">
+    <path d="M1,1 L10,5 L1,9" fill="none" stroke="#8a6d00" stroke-width="1.2"/>
+  </marker>
+</defs>
+
+<style>
+  .pkgBox    { fill: #fbfbfb; stroke: #999; stroke-width: 1; stroke-dasharray: 4 3; }
+  .pkgTitle  { font-size: 12px; font-weight: 600; fill: #333; }
+  .clsBox    { fill: #ffffff; stroke: #555; stroke-width: 1; }
+  .clsHead   { fill: #eef0f3; stroke: #555; stroke-width: 1; }
+  .ifaceHead { fill: #f5f0e6; stroke: #8a6d00; stroke-width: 1; }
+  .ifaceBox  { fill: #fffdf6; stroke: #8a6d00; stroke-width: 1; }
+  .modelHead { fill: #eef4ea; stroke: #4f7a3a; stroke-width: 1; }
+  .modelBox  { fill: #fbfdf9; stroke: #4f7a3a; stroke-width: 1; }
+  .testHead  { fill: #f2eef6; stroke: #6a4a8a; stroke-width: 1; }
+  .testBox   { fill: #fbfaff; stroke: #6a4a8a; stroke-width: 1; }
+  .clsName   { font-size: 11.5px; font-weight: 600; fill: #1a1a1a; }
+  .stereo    { font-size: 9.5px; font-style: italic; fill: #555; }
+  .attr      { font-size: 9.5px; fill: #2c2c2c; font-family: 'Consolas','Courier New',monospace; }
+  .meth      { font-size: 9.5px; fill: #2c2c2c; font-family: 'Consolas','Courier New',monospace; }
+  .sep       { stroke: #bbb; stroke-width: 0.6; }
+  .rel       { stroke: #555; stroke-width: 1; fill: none; }
+  .relMsg    { stroke: #8a6d00; stroke-width: 1.1; fill: none; stroke-dasharray: 6 3; }
+  .relDep    { stroke: #555; stroke-width: 0.9; fill: none; stroke-dasharray: 3 2; }
+  .relLabel  { font-size: 9px; fill: #555; }
+</style>
+
+<rect width="2200" height="1500" fill="#ffffff"/>
+
+<rect x="8" y="8" width="2184" height="1484" fill="none" stroke="#555" stroke-width="1.2"/>
+<text x="1100" y="26" text-anchor="middle" class="pkgTitle" font-size="14">org.example — proyecto_dacd</text>
+
+<!-- ============================================================ -->
+<!-- PAQUETE weather-provider -->
+<!-- ============================================================ -->
+<rect x="30" y="50" width="430" height="560" class="pkgBox"/>
+<text x="245" y="68" text-anchor="middle" class="pkgTitle">weather-provider</text>
+
+<!-- Main (weather-provider) -->
+<g>
+  <rect x="50" y="82" width="200" height="118" class="clsBox"/>
+  <rect x="50" y="82" width="200" height="20" class="clsHead"/>
+  <text x="150" y="96" text-anchor="middle" class="clsName">Main</text>
+  <line x1="50" y1="102" x2="250" y2="102" class="sep"/>
+  <text x="56" y="115" class="attr">- apiKey: String</text>
+  <text x="56" y="127" class="attr">- store: WeatherStore</text>
+  <text x="56" y="139" class="attr">- supplier: WeatherSupplier</text>
+  <text x="56" y="151" class="attr">- publisher: WeatherEvent-</text>
+  <text x="62" y="161" class="attr">  Publisher</text>
+  <line x1="50" y1="167" x2="250" y2="167" class="sep"/>
+  <text x="56" y="180" class="meth">+ main(args:String[]):void</text>
+  <text x="56" y="192" class="meth">  [scheduleAtFixedRate 1h]</text>
+</g>
+
+<!-- WeatherSupplier -->
+<g>
+  <rect x="50" y="220" width="200" height="92" class="clsBox"/>
+  <rect x="50" y="220" width="200" height="20" class="clsHead"/>
+  <text x="150" y="234" text-anchor="middle" class="clsName">WeatherSupplier</text>
+  <line x1="50" y1="240" x2="250" y2="240" class="sep"/>
+  <text x="56" y="253" class="attr">- apiKey: String</text>
+  <text x="56" y="265" class="attr">- client: OkHttpClient</text>
+  <line x1="50" y1="271" x2="250" y2="271" class="sep"/>
+  <text x="56" y="284" class="meth">+ WeatherSupplier(apiKey)</text>
+  <text x="56" y="296" class="meth">+ getSelectedData(city):</text>
+  <text x="62" y="306" class="meth">  JsonObject</text>
+</g>
+
+<!-- WeatherProvider interface -->
+<g>
+  <rect x="280" y="220" width="180" height="78" class="ifaceBox"/>
+  <rect x="280" y="220" width="180" height="32" class="ifaceHead"/>
+  <text x="370" y="234" text-anchor="middle" class="stereo">«interface»</text>
+  <text x="370" y="247" text-anchor="middle" class="clsName">WeatherProvider</text>
+  <line x1="280" y1="252" x2="460" y2="252" class="sep"/>
+  <text x="286" y="265" class="meth">+ getSelectedData(city,</text>
+  <text x="292" y="277" class="meth">  temp, humidity):</text>
+  <text x="292" y="289" class="meth">  JsonObject</text>
+</g>
+
+<!-- WeatherEventPublisher -->
+<g>
+  <rect x="50" y="332" width="200" height="120" class="clsBox"/>
+  <rect x="50" y="332" width="200" height="20" class="clsHead"/>
+  <text x="150" y="346" text-anchor="middle" class="clsName">WeatherEventPublisher</text>
+  <line x1="50" y1="352" x2="250" y2="352" class="sep"/>
+  <text x="56" y="365" class="attr">- BROKER_URL: String</text>
+  <text x="56" y="377" class="attr">- TOPIC_NAME: String</text>
+  <text x="56" y="389" class="attr">- connection: Connection</text>
+  <text x="56" y="401" class="attr">- session: Session</text>
+  <text x="56" y="413" class="attr">- producer: MessageProducer</text>
+  <line x1="50" y1="419" x2="250" y2="419" class="sep"/>
+  <text x="56" y="432" class="meth">+ publish(city,temp,hum):void</text>
+  <text x="56" y="444" class="meth">+ close(): void</text>
+</g>
+
+<!-- WeatherStore interface -->
+<g>
+  <rect x="280" y="318" width="180" height="60" class="ifaceBox"/>
+  <rect x="280" y="318" width="180" height="32" class="ifaceHead"/>
+  <text x="370" y="332" text-anchor="middle" class="stereo">«interface»</text>
+  <text x="370" y="345" text-anchor="middle" class="clsName">WeatherStore</text>
+  <line x1="280" y1="350" x2="460" y2="350" class="sep"/>
+  <text x="286" y="363" class="meth">+ insertWeather(city,</text>
+  <text x="292" y="373" class="meth">  temp, humidity): void</text>
+</g>
+
+<!-- SqliteWeatherStore -->
+<g>
+  <rect x="280" y="396" width="180" height="92" class="clsBox"/>
+  <rect x="280" y="396" width="180" height="20" class="clsHead"/>
+  <text x="370" y="410" text-anchor="middle" class="clsName">SqliteWeatherStore</text>
+  <line x1="280" y1="416" x2="460" y2="416" class="sep"/>
+  <text x="286" y="429" class="attr">- dbPath: String</text>
+  <line x1="280" y1="435" x2="460" y2="435" class="sep"/>
+  <text x="286" y="448" class="meth">+ SqliteWeatherStore(db)</text>
+  <text x="286" y="460" class="meth">+ insertWeather(...): void</text>
+  <text x="286" y="472" class="meth">  [implements WeatherStore]</text>
+</g>
+
+<!-- modelo Weather/Location -->
+<g>
+  <rect x="120" y="508" width="170" height="92" class="modelBox"/>
+  <rect x="120" y="508" width="170" height="32" class="modelHead"/>
+  <text x="205" y="522" text-anchor="middle" class="stereo">«modelo»</text>
+  <text x="205" y="535" text-anchor="middle" class="clsName">WeatherEvent</text>
+  <line x1="120" y1="540" x2="290" y2="540" class="sep"/>
+  <text x="126" y="553" class="attr">- ts, ss, city: String</text>
+  <text x="126" y="565" class="attr">- temp: double</text>
+  <text x="126" y="577" class="attr">- humidity: int</text>
+  <line x1="120" y1="583" x2="290" y2="583" class="sep"/>
+  <text x="126" y="595" class="meth">+ getters/setters</text>
+</g>
+
+<!-- ============================================================ -->
+<!-- PAQUETE sports-scraper -->
+<!-- ============================================================ -->
+<rect x="500" y="50" width="470" height="700" class="pkgBox"/>
+<text x="735" y="68" text-anchor="middle" class="pkgTitle">sports-scraper</text>
+
+<!-- Main (sports-scraper) -->
+<g>
+  <rect x="520" y="82" width="210" height="128" class="clsBox"/>
+  <rect x="520" y="82" width="210" height="20" class="clsHead"/>
+  <text x="625" y="96" text-anchor="middle" class="clsName">Main</text>
+  <line x1="520" y1="102" x2="730" y2="102" class="sep"/>
+  <text x="526" y="115" class="attr">- apiKey: String</text>
+  <text x="526" y="127" class="attr">- client: FootballApiClient</text>
+  <text x="526" y="139" class="attr">- store: FootballStore</text>
+  <text x="526" y="151" class="attr">- publisher: FootballEvent-</text>
+  <text x="532" y="161" class="attr">  Publisher</text>
+  <line x1="520" y1="167" x2="730" y2="167" class="sep"/>
+  <text x="526" y="180" class="meth">+ main(args:String[]):void</text>
+  <text x="526" y="192" class="meth">  [scheduleAtFixedRate 1h]</text>
+</g>
+
+<!-- FootballApiClient -->
+<g>
+  <rect x="520" y="232" width="210" height="142" class="clsBox"/>
+  <rect x="520" y="232" width="210" height="20" class="clsHead"/>
+  <text x="625" y="246" text-anchor="middle" class="clsName">FootballApiClient</text>
+  <line x1="520" y1="252" x2="730" y2="252" class="sep"/>
+  <text x="526" y="265" class="attr">- BASE_URL: String</text>
+  <text x="526" y="277" class="attr">- LALIGA_CODE: String = "PD"</text>
+  <text x="526" y="289" class="attr">- SEASON: int = 2024</text>
+  <text x="526" y="301" class="attr">- apiKey: String</text>
+  <line x1="520" y1="307" x2="730" y2="307" class="sep"/>
+  <text x="526" y="320" class="meth">+ getLastMatches(limit):</text>
+  <text x="532" y="330" class="meth">  List&lt;MatchData&gt;</text>
+  <text x="526" y="342" class="meth">+ getStandings():</text>
+  <text x="532" y="352" class="meth">  List&lt;StandingData&gt;</text>
+</g>
+
+<!-- FootballEventPublisher -->
+<g>
+  <rect x="520" y="406" width="210" height="140" class="clsBox"/>
+  <rect x="520" y="406" width="210" height="20" class="clsHead"/>
+  <text x="625" y="420" text-anchor="middle" class="clsName">FootballEventPublisher</text>
+  <line x1="520" y1="426" x2="730" y2="426" class="sep"/>
+  <text x="526" y="439" class="attr">- BROKER_URL: String</text>
+  <text x="526" y="451" class="attr">- TOPIC_NAME: String</text>
+  <text x="526" y="463" class="attr">- connection, session</text>
+  <text x="526" y="475" class="attr">- producer: MessageProducer</text>
+  <line x1="520" y1="481" x2="730" y2="481" class="sep"/>
+  <text x="526" y="494" class="meth">+ publishMatch(competition,</text>
+  <text x="532" y="504" class="meth">  matchDate, teams, score):void</text>
+  <text x="526" y="516" class="meth">+ publishStanding(pos,team,</text>
+  <text x="532" y="526" class="meth">  points,played): void</text>
+  <text x="526" y="538" class="meth">+ close(): void</text>
+</g>
+
+<!-- FootballStore interface -->
+<g>
+  <rect x="760" y="232" width="190" height="100" class="ifaceBox"/>
+  <rect x="760" y="232" width="190" height="32" class="ifaceHead"/>
+  <text x="855" y="246" text-anchor="middle" class="stereo">«interface»</text>
+  <text x="855" y="259" text-anchor="middle" class="clsName">FootballStore</text>
+  <line x1="760" y1="264" x2="950" y2="264" class="sep"/>
+  <text x="766" y="277" class="meth">+ insertMatch(matchId,</text>
+  <text x="772" y="287" class="meth">  competition,...): void</text>
+  <text x="766" y="299" class="meth">+ insertStanding(pos,team,</text>
+  <text x="772" y="309" class="meth">  played,...): void</text>
+  <text x="766" y="321" class="meth">  [tablas: matches, standings]</text>
+</g>
+
+<!-- SqliteFootballStore -->
+<g>
+  <rect x="760" y="352" width="190" height="100" class="clsBox"/>
+  <rect x="760" y="352" width="190" height="20" class="clsHead"/>
+  <text x="855" y="366" text-anchor="middle" class="clsName">SqliteFootballStore</text>
+  <line x1="760" y1="372" x2="950" y2="372" class="sep"/>
+  <text x="766" y="385" class="attr">- dbPath: String</text>
+  <line x1="760" y1="391" x2="950" y2="391" class="sep"/>
+  <text x="766" y="404" class="meth">+ SqliteFootballStore(db)</text>
+  <text x="766" y="416" class="meth">+ insertMatch(...): void</text>
+  <text x="766" y="428" class="meth">+ insertStanding(...): void</text>
+  <text x="766" y="440" class="meth">  [uses SQLite]</text>
+</g>
+
+<!-- modelo MatchData -->
+<g>
+  <rect x="520" y="586" width="210" height="140" class="modelBox"/>
+  <rect x="520" y="586" width="210" height="32" class="modelHead"/>
+  <text x="625" y="600" text-anchor="middle" class="stereo">«modelo»</text>
+  <text x="625" y="613" text-anchor="middle" class="clsName">MatchData</text>
+  <line x1="520" y1="618" x2="730" y2="618" class="sep"/>
+  <text x="526" y="631" class="attr">- matchId: int</text>
+  <text x="526" y="643" class="attr">- competition,matchDate: String</text>
+  <text x="526" y="655" class="attr">- homeTeam, awayTeam: String</text>
+  <text x="526" y="667" class="attr">- homeScore, awayScore: int</text>
+  <text x="526" y="679" class="attr">- status: String</text>
+  <line x1="520" y1="685" x2="730" y2="685" class="sep"/>
+  <text x="526" y="698" class="meth">+ MatchData(matchId,...)</text>
+  <text x="526" y="710" class="meth">+ getters</text>
+</g>
+
+<!-- modelo StandingData -->
+<g>
+  <rect x="760" y="478" width="190" height="124" class="modelBox"/>
+  <rect x="760" y="478" width="190" height="32" class="modelHead"/>
+  <text x="855" y="492" text-anchor="middle" class="stereo">«modelo»</text>
+  <text x="855" y="505" text-anchor="middle" class="clsName">StandingData</text>
+  <line x1="760" y1="510" x2="950" y2="510" class="sep"/>
+  <text x="766" y="523" class="attr">- position: int</text>
+  <text x="766" y="535" class="attr">- teamName: String</text>
+  <text x="766" y="547" class="attr">- played,won,draw,lost: int</text>
+  <text x="766" y="559" class="attr">- goalsFor,goalsAgainst: int</text>
+  <text x="766" y="571" class="attr">- goalDiff, points: int</text>
+  <line x1="760" y1="577" x2="950" y2="577" class="sep"/>
+  <text x="766" y="590" class="meth">+ getters</text>
+</g>
+
+<!-- ============================================================ -->
+<!-- PAQUETE event-store-builder -->
+<!-- ============================================================ -->
+<rect x="1010" y="50" width="380" height="420" class="pkgBox"/>
+<text x="1200" y="68" text-anchor="middle" class="pkgTitle">event-store-builder</text>
+
+<!-- Main (ESB) -->
+<g>
+  <rect x="1030" y="82" width="200" height="98" class="clsBox"/>
+  <rect x="1030" y="82" width="200" height="20" class="clsHead"/>
+  <text x="1130" y="96" text-anchor="middle" class="clsName">Main</text>
+  <line x1="1030" y1="102" x2="1230" y2="102" class="sep"/>
+  <text x="1036" y="115" class="attr">- builder: EventStoreBuilder</text>
+  <line x1="1030" y1="121" x2="1230" y2="121" class="sep"/>
+  <text x="1036" y="134" class="meth">+ main(args:String[]):void</text>
+  <text x="1036" y="146" class="meth">  subscribeTo("Weather",...)</text>
+  <text x="1036" y="158" class="meth">  subscribeTo("Football",...)</text>
+  <text x="1036" y="170" class="meth">  Thread.currentThread().join()</text>
+</g>
+
+<!-- EventStoreBuilder -->
+<g>
+  <rect x="1030" y="202" width="200" height="186" class="clsBox"/>
+  <rect x="1030" y="202" width="200" height="20" class="clsHead"/>
+  <text x="1130" y="216" text-anchor="middle" class="clsName">EventStoreBuilder</text>
+  <line x1="1030" y1="222" x2="1230" y2="222" class="sep"/>
+  <text x="1036" y="235" class="attr">- BROKER_URL: String</text>
+  <text x="1036" y="247" class="attr">- CLIENT_ID: String</text>
+  <text x="1036" y="259" class="attr">- connection: Connection</text>
+  <text x="1036" y="271" class="attr">- session: Session</text>
+  <line x1="1030" y1="277" x2="1230" y2="277" class="sep"/>
+  <text x="1036" y="290" class="meth">+ EventStoreBuilder()</text>
+  <text x="1036" y="302" class="meth">+ subscribeTo(topic,ss):void</text>
+  <text x="1036" y="314" class="meth">- saveEvent(topic,ss,json)</text>
+  <text x="1036" y="326" class="meth">  [eventstore/topic/ss/</text>
+  <text x="1036" y="336" class="meth">   yyyyMMdd.events]</text>
+  <text x="1036" y="348" class="meth">+ close(): void</text>
+  <text x="1036" y="362" class="meth" font-style="italic">subscribes</text>
+</g>
+
+<!-- EventStoreBuilderTest -->
+<g>
+  <rect x="1260" y="82" width="110" height="120" class="testBox"/>
+  <rect x="1260" y="82" width="110" height="32" class="testHead"/>
+  <text x="1315" y="96" text-anchor="middle" class="stereo">«test»</text>
+  <text x="1315" y="109" text-anchor="middle" class="clsName" font-size="10">EventStoreBuilderTest</text>
+  <line x1="1260" y1="114" x2="1370" y2="114" class="sep"/>
+  <text x="1264" y="126" class="attr" font-size="8.5">tempDir: Path</text>
+  <line x1="1260" y1="132" x2="1370" y2="132" class="sep"/>
+  <text x="1264" y="144" class="meth" font-size="8.5">@Test eventFileIsCreated</text>
+  <text x="1264" y="155" class="meth" font-size="8.5">@Test multipleEvents</text>
+  <text x="1268" y="166" class="meth" font-size="8.5">  AppendedOnLines</text>
+  <text x="1264" y="178" class="meth" font-size="8.5">[uses @TempDir, JUnit5]</text>
+</g>
+
+<!-- ============================================================ -->
+<!-- PAQUETE business-unit -->
+<!-- ============================================================ -->
+<rect x="1410" y="50" width="760" height="1400" class="pkgBox"/>
+<text x="1790" y="68" text-anchor="middle" class="pkgTitle">business-unit</text>
+
+<!-- Main (BU) -->
+<g>
+  <rect x="1430" y="82" width="220" height="148" class="clsBox"/>
+  <rect x="1430" y="82" width="220" height="20" class="clsHead"/>
+  <text x="1540" y="96" text-anchor="middle" class="clsName">Main</text>
+  <line x1="1430" y1="102" x2="1650" y2="102" class="sep"/>
+  <text x="1436" y="115" class="attr">- API_PORT: int = 7000</text>
+  <text x="1436" y="127" class="attr">- datamart: DatamartRepository</text>
+  <text x="1436" y="139" class="attr">- historyReader: EventStore-</text>
+  <text x="1442" y="149" class="attr">  Reader</text>
+  <text x="1436" y="161" class="attr">- subscriber: BusinessUnit-</text>
+  <text x="1442" y="171" class="attr">  Subscriber</text>
+  <text x="1436" y="183" class="attr">- api: RestApi</text>
+  <line x1="1430" y1="189" x2="1650" y2="189" class="sep"/>
+  <text x="1436" y="202" class="meth">+ main(args:String[]):void</text>
+  <text x="1436" y="214" class="meth">  [boots datamart+historyReader</text>
+  <text x="1436" y="225" class="meth">   +subscriber+api]</text>
+</g>
+
+<!-- BusinessUnitSubscriber -->
+<g>
+  <rect x="1430" y="260" width="240" height="284" class="clsBox"/>
+  <rect x="1430" y="260" width="240" height="20" class="clsHead"/>
+  <text x="1550" y="274" text-anchor="middle" class="clsName">BusinessUnitSubscriber</text>
+  <line x1="1430" y1="280" x2="1670" y2="280" class="sep"/>
+  <text x="1436" y="293" class="attr">- BROKER_URL: String</text>
+  <text x="1436" y="305" class="attr">- CLIENT_ID: String</text>
+  <text x="1436" y="317" class="attr">- datamart: DatamartRepository</text>
+  <text x="1436" y="329" class="attr">- gson: Gson</text>
+  <text x="1436" y="341" class="attr">- connection, session</text>
+  <line x1="1430" y1="347" x2="1670" y2="347" class="sep"/>
+  <text x="1436" y="360" class="meth">+ BusinessUnitSubscriber(dm)</text>
+  <text x="1436" y="372" class="meth">+ start(): void</text>
+  <text x="1436" y="384" class="meth">- subscribeToWeather():void</text>
+  <text x="1436" y="396" class="meth">- subscribeToFootball():void</text>
+  <text x="1436" y="408" class="meth">- processWeatherEvent(json)</text>
+  <text x="1436" y="420" class="meth">- processFootballEvent(json)</text>
+  <text x="1436" y="432" class="meth">- tryGenerateReport(city)</text>
+  <text x="1436" y="444" class="meth">  [genera MatchWeatherReport]</text>
+  <text x="1436" y="456" class="meth">- isLasPalmasMatch(event):</text>
+  <text x="1442" y="466" class="meth">  boolean</text>
+  <text x="1436" y="478" class="meth">+ close(): void</text>
+</g>
+
+<!-- EventStoreReader -->
+<g>
+  <rect x="1690" y="260" width="220" height="210" class="clsBox"/>
+  <rect x="1690" y="260" width="220" height="20" class="clsHead"/>
+  <text x="1800" y="274" text-anchor="middle" class="clsName">EventStoreReader</text>
+  <line x1="1690" y1="280" x2="1910" y2="280" class="sep"/>
+  <text x="1696" y="293" class="attr">- EVENTSTORE_PATH: String</text>
+  <text x="1696" y="305" class="attr">- gson: Gson</text>
+  <text x="1696" y="317" class="attr">- datamart: DatamartRepository</text>
+  <line x1="1690" y1="323" x2="1910" y2="323" class="sep"/>
+  <text x="1696" y="336" class="meth">+ EventStoreReader(dm)</text>
+  <text x="1696" y="348" class="meth">+ loadHistoricalEvents():void</text>
+  <text x="1696" y="360" class="meth">- loadWeatherHistory(): int</text>
+  <text x="1696" y="372" class="meth">- loadFootballHistory(): int</text>
+  <text x="1696" y="384" class="meth">- readAllLines(dir):</text>
+  <text x="1702" y="394" class="meth">  List&lt;String&gt;</text>
+  <text x="1696" y="406" class="meth">  [reads .events files]</text>
+  <text x="1696" y="418" class="meth">- isLasPalmasMatch(event)</text>
+</g>
+
+<!-- DatamartRepository -->
+<g>
+  <rect x="1430" y="566" width="480" height="372" class="clsBox"/>
+  <rect x="1430" y="566" width="480" height="20" class="clsHead"/>
+  <text x="1670" y="580" text-anchor="middle" class="clsName">DatamartRepository</text>
+  <line x1="1430" y1="586" x2="1910" y2="586" class="sep"/>
+  <text x="1436" y="599" class="attr">- dbUrl: String (jdbc:sqlite:datamart.db)</text>
+  <line x1="1430" y1="605" x2="1910" y2="605" class="sep"/>
+  <text x="1436" y="617" class="attr" font-style="italic">// tablas</text>
+  <text x="1436" y="629" class="attr">weather_latest(city PK,temp,humidity,ts)</text>
+  <text x="1436" y="641" class="attr">match_history(UNIQUE date,home,away)</text>
+  <text x="1436" y="653" class="attr">standings(position PK,team,points)</text>
+  <text x="1436" y="665" class="attr">match_weather_report(id PK, ...)</text>
+  <line x1="1430" y1="671" x2="1910" y2="671" class="sep"/>
+  <text x="1436" y="683" class="meth">+ DatamartRepository(dbPath)</text>
+  <text x="1436" y="697" class="meth" font-style="italic">// Weather</text>
+  <text x="1436" y="709" class="meth">+ upsertWeather(event):void</text>
+  <text x="1436" y="721" class="meth">+ getLatestWeather(city):WeatherEvent</text>
+  <text x="1436" y="735" class="meth" font-style="italic">// Matches</text>
+  <text x="1436" y="747" class="meth">+ insertMatch(event): void</text>
+  <text x="1436" y="759" class="meth">+ getLatestLasPalmasMatch():MatchEvent</text>
+  <text x="1436" y="771" class="meth">+ getAllLasPalmasMatches():List</text>
+  <text x="1436" y="785" class="meth" font-style="italic">// Standings</text>
+  <text x="1436" y="797" class="meth">+ upsertStanding(event): void</text>
+  <text x="1436" y="809" class="meth">+ getStandings(): List</text>
+  <text x="1436" y="823" class="meth" font-style="italic">// Reports</text>
+  <text x="1436" y="835" class="meth">+ insertReport(r): void</text>
+  <text x="1436" y="847" class="meth">+ getLatestReport():MatchWeatherReport</text>
+  <text x="1436" y="859" class="meth">+ getAllReports(): List</text>
+  <line x1="1430" y1="865" x2="1910" y2="865" class="sep"/>
+  <text x="1436" y="878" class="meth" font-style="italic">// Correlación de Pearson</text>
+  <text x="1436" y="890" class="meth">+ getPearsonCorrelation(): Map</text>
+  <text x="1442" y="900" class="meth">  [temperatura vs goles UD LP]</text>
+  <text x="1436" y="912" class="meth">- calcularPearson(x,y): double</text>
+  <text x="1436" y="924" class="meth">- interpretarPearson(r): String</text>
+</g>
+
+<!-- RestApi -->
+<g>
+  <rect x="1940" y="260" width="220" height="280" class="clsBox"/>
+  <rect x="1940" y="260" width="220" height="20" class="clsHead"/>
+  <text x="2050" y="274" text-anchor="middle" class="clsName">RestApi</text>
+  <line x1="1940" y1="280" x2="2160" y2="280" class="sep"/>
+  <text x="1946" y="293" class="attr">- datamart: DatamartRepository</text>
+  <text x="1946" y="305" class="attr">- gson: Gson</text>
+  <text x="1946" y="317" class="attr">- app: Javalin</text>
+  <line x1="1940" y1="323" x2="2160" y2="323" class="sep"/>
+  <text x="1946" y="336" class="meth">+ RestApi(datamart)</text>
+  <text x="1946" y="348" class="meth">+ start(port:int): void</text>
+  <text x="1946" y="360" class="meth">+ stop(): void</text>
+  <line x1="1940" y1="366" x2="2160" y2="366" class="sep"/>
+  <text x="1946" y="378" class="attr" font-style="italic">// Endpoints (puerto 7000)</text>
+  <text x="1946" y="392" class="meth">GET /report/laspalmas</text>
+  <text x="1946" y="404" class="meth">GET /report/history</text>
+  <text x="1946" y="416" class="meth">GET /report/correlation</text>
+  <text x="1946" y="428" class="meth">GET /standings</text>
+  <text x="1946" y="440" class="meth">GET /weather/current</text>
+  <text x="1946" y="452" class="meth">GET /matches/laspalmas</text>
+</g>
+
+<!-- modelo WeatherEvent (BU) -->
+<g>
+  <rect x="1430" y="970" width="200" height="148" class="modelBox"/>
+  <rect x="1430" y="970" width="200" height="32" class="modelHead"/>
+  <text x="1530" y="984" text-anchor="middle" class="stereo">«modelo»</text>
+  <text x="1530" y="997" text-anchor="middle" class="clsName">WeatherEvent</text>
+  <line x1="1430" y1="1002" x2="1630" y2="1002" class="sep"/>
+  <text x="1436" y="1015" class="attr">- ts, ss: String</text>
+  <text x="1436" y="1027" class="attr">- city: String</text>
+  <text x="1436" y="1039" class="attr">- temp: double</text>
+  <text x="1436" y="1051" class="attr">- humidity: int</text>
+  <line x1="1430" y1="1057" x2="1630" y2="1057" class="sep"/>
+  <text x="1436" y="1070" class="meth">+ getters/setters</text>
+  <text x="1436" y="1082" class="meth">  WeatherEvent(ts,ss,city,...)</text>
+</g>
+
+<!-- modelo MatchEvent (BU) -->
+<g>
+  <rect x="1660" y="970" width="220" height="170" class="modelBox"/>
+  <rect x="1660" y="970" width="220" height="32" class="modelHead"/>
+  <text x="1770" y="984" text-anchor="middle" class="stereo">«modelo»</text>
+  <text x="1770" y="997" text-anchor="middle" class="clsName">MatchEvent</text>
+  <line x1="1660" y1="1002" x2="1880" y2="1002" class="sep"/>
+  <text x="1666" y="1015" class="attr">- ts, ss, type: String</text>
+  <text x="1666" y="1027" class="attr">- competition: String</text>
+  <text x="1666" y="1039" class="attr">- match_date: String</text>
+  <text x="1666" y="1051" class="attr">- home_team, away_team: String</text>
+  <text x="1666" y="1063" class="attr">- home_score,away_score: int</text>
+  <line x1="1660" y1="1069" x2="1880" y2="1069" class="sep"/>
+  <text x="1666" y="1082" class="meth">+ getters/setters</text>
+  <text x="1666" y="1094" class="meth">  MatchEvent(ts,ss,...)</text>
+</g>
+
+<!-- modelo StandingEvent (BU) -->
+<g>
+  <rect x="1910" y="970" width="200" height="148" class="modelBox"/>
+  <rect x="1910" y="970" width="200" height="32" class="modelHead"/>
+  <text x="2010" y="984" text-anchor="middle" class="stereo">«modelo»</text>
+  <text x="2010" y="997" text-anchor="middle" class="clsName">StandingEvent</text>
+  <line x1="1910" y1="1002" x2="2110" y2="1002" class="sep"/>
+  <text x="1916" y="1015" class="attr">- ts, ss, type: String</text>
+  <text x="1916" y="1027" class="attr">- position: int</text>
+  <text x="1916" y="1039" class="attr">- team_name: String</text>
+  <text x="1916" y="1051" class="attr">- points, played_games: int</text>
+  <line x1="1910" y1="1057" x2="2110" y2="1057" class="sep"/>
+  <text x="1916" y="1070" class="meth">+ getters/setters</text>
+</g>
+
+<!-- modelo MatchWeatherReport (clave) -->
+<g>
+  <rect x="1430" y="1158" width="320" height="270" class="modelBox"/>
+  <rect x="1430" y="1158" width="320" height="32" class="modelHead"/>
+  <text x="1590" y="1172" text-anchor="middle" class="stereo">«modelo» — núcleo del análisis</text>
+  <text x="1590" y="1185" text-anchor="middle" class="clsName">MatchWeatherReport</text>
+  <line x1="1430" y1="1190" x2="1750" y2="1190" class="sep"/>
+  <text x="1436" y="1203" class="attr">- matchDate, competition: String</text>
+  <text x="1436" y="1215" class="attr">- homeTeam, awayTeam: String</text>
+  <text x="1436" y="1227" class="attr">- homeScore, awayScore: int</text>
+  <text x="1436" y="1239" class="attr">- city: String</text>
+  <text x="1436" y="1251" class="attr">- temp: double</text>
+  <text x="1436" y="1263" class="attr">- humidity: int</text>
+  <text x="1436" y="1275" class="attr">- weatherCondition: String</text>
+  <text x="1442" y="1285" class="attr">  [FAVORABLE/ADVERSO/RIESGO]</text>
+  <text x="1436" y="1297" class="attr">- conditionDetail: String</text>
+  <text x="1436" y="1309" class="attr">- capturedAt: String</text>
+  <line x1="1430" y1="1315" x2="1750" y2="1315" class="sep"/>
+  <text x="1436" y="1328" class="meth">+ getters/setters</text>
+  <text x="1436" y="1340" class="meth">+ evaluateConditions(): void</text>
+  <text x="1442" y="1352" class="meth">  temp&lt;5 ó hum&gt;90 → RIESGO</text>
+  <text x="1442" y="1364" class="meth">  temp&lt;10 ó hum&gt;75 → ADVERSO</text>
+  <text x="1442" y="1376" class="meth">  si no → FAVORABLE</text>
+  <text x="1436" y="1396" class="meth" font-style="italic">getPearsonCorrelation()</text>
+  <text x="1442" y="1408" class="meth" font-style="italic">  relaciona temp con goles</text>
+</g>
+
+<!-- DatamartRepositoryTest -->
+<g>
+  <rect x="1940" y="566" width="220" height="220" class="testBox"/>
+  <rect x="1940" y="566" width="220" height="32" class="testHead"/>
+  <text x="2050" y="580" text-anchor="middle" class="stereo">«test»</text>
+  <text x="2050" y="593" text-anchor="middle" class="clsName">DatamartRepositoryTest</text>
+  <line x1="1940" y1="598" x2="2160" y2="598" class="sep"/>
+  <text x="1946" y="611" class="attr" font-size="8.5">tempDir: Path; repo: Datamart-</text>
+  <text x="1952" y="621" class="attr" font-size="8.5">Repository</text>
+  <text x="1946" y="633" class="meth" font-size="8.5">@BeforeEach setUp()</text>
+  <line x1="1940" y1="639" x2="2160" y2="639" class="sep"/>
+  <text x="1946" y="651" class="meth" font-size="8.5">@Test upsertWeather_guarda</text>
+  <text x="1946" y="662" class="meth" font-size="8.5">@Test upsertWeather_actualiza</text>
+  <text x="1946" y="673" class="meth" font-size="8.5">@Test getLatestWeather_null</text>
+  <text x="1946" y="684" class="meth" font-size="8.5">@Test insertMatch_getLatest</text>
+  <text x="1946" y="695" class="meth" font-size="8.5">@Test getAllLasPalmasMatches</text>
+  <text x="1946" y="706" class="meth" font-size="8.5">@Test upsertStanding_guarda</text>
+  <text x="1946" y="717" class="meth" font-size="8.5">@Test insertReport_getLatest</text>
+  <text x="1946" y="728" class="meth" font-size="8.5">@Test evaluateConditions_</text>
+  <text x="1952" y="739" class="meth" font-size="8.5">  clasificaCorrectamente</text>
+</g>
+
+<!-- ============================================================ -->
+<!-- ActiveMQ Topics -->
+<!-- ============================================================ -->
+<g>
+  <rect x="1000" y="1280" width="160" height="60" rx="6" fill="#fff7e0" stroke="#8a6d00" stroke-width="1.2"/>
+  <text x="1080" y="1302" text-anchor="middle" class="clsName" fill="#6b5400">«ActiveMQ topic»</text>
+  <text x="1080" y="1318" text-anchor="middle" class="clsName" fill="#6b5400">Weather</text>
+</g>
+<g>
+  <rect x="1190" y="1280" width="160" height="60" rx="6" fill="#fff7e0" stroke="#8a6d00" stroke-width="1.2"/>
+  <text x="1270" y="1302" text-anchor="middle" class="clsName" fill="#6b5400">«ActiveMQ topic»</text>
+  <text x="1270" y="1318" text-anchor="middle" class="clsName" fill="#6b5400">Football</text>
+</g>
+
+<!-- ============================================================ -->
+<!-- RELACIONES -->
+<!-- ============================================================ -->
+
+<!-- Implementaciones -->
+<path d="M250,260 H280" class="rel" marker-end="url(#arrImpl)"/>
+<path d="M370,396 V378" class="rel" marker-end="url(#arrImpl)"/>
+<path d="M730,266 H760" class="rel" marker-end="url(#arrImpl)"/>
+<path d="M855,352 V332" class="rel" marker-end="url(#arrImpl)"/>
+
+<!-- Main usa supplier/publisher (weather-provider) -->
+<path d="M150,200 V220" class="relDep" marker-end="url(#arrOpen)"/>
+<path d="M180,200 V215 H150 V332" class="relDep" marker-end="url(#arrOpen)"/>
+
+<!-- Main usa client/store/publisher (sports-scraper) -->
+<path d="M625,210 V232" class="relDep" marker-end="url(#arrOpen)"/>
+<path d="M660,210 V395 H625 V406" class="relDep" marker-end="url(#arrOpen)"/>
+
+<!-- FootballApiClient devuelve MatchData / StandingData -->
+<path d="M625,374 V586" class="relDep" marker-end="url(#arrOpen)"/>
+<path d="M730,310 H855 V478" class="relDep" marker-end="url(#arrOpen)"/>
+
+<!-- Main ESB usa EventStoreBuilder -->
+<path d="M1130,180 V202" class="rel" marker-end="url(#arrOpen)"/>
+
+<!-- EventStoreBuilderTest -> EventStoreBuilder -->
+<path d="M1260,142 H1230" class="relDep" marker-end="url(#arrOpen)"/>
+
+<!-- Publishers -> broker topics (mensajes ActiveMQ) -->
+<path d="M250,392 C 500,392 700,1300 1000,1300" class="relMsg" marker-end="url(#arrMsg)"/>
+<text x="500" y="700" class="relLabel" fill="#8a6d00">publish «Weather»</text>
+
+<path d="M730,470 C 900,600 1000,1100 1190,1305" class="relMsg" marker-end="url(#arrMsg)"/>
+<text x="850" y="700" class="relLabel" fill="#8a6d00">publish «Football»</text>
+
+<!-- broker -> EventStoreBuilder (subscribe) -->
+<path d="M1080,1280 C 1080,800 1130,500 1130,388" class="relMsg" marker-end="url(#arrMsg)"/>
+<path d="M1270,1280 C 1270,800 1190,500 1190,388" class="relMsg" marker-end="url(#arrMsg)"/>
+<text x="1310" y="900" class="relLabel" fill="#8a6d00">subscribe (durable)</text>
+
+<!-- broker -> BusinessUnitSubscriber (subscribe) -->
+<path d="M1080,1340 C 1080,1450 1430,1450 1430,400" class="relMsg" marker-end="url(#arrMsg)"/>
+<path d="M1270,1340 C 1270,1470 1450,1470 1450,400" class="relMsg" marker-end="url(#arrMsg)"/>
+<text x="1310" y="1460" class="relLabel" fill="#8a6d00">subscribe (durable)</text>
+
+<!-- Main BU -> componentes -->
+<path d="M1540,230 V260" class="rel" marker-end="url(#arrOpen)"/>
+<path d="M1610,230 V245 H1800 V260" class="rel" marker-end="url(#arrOpen)"/>
+<path d="M1650,180 H1940 V260" class="rel" marker-end="url(#arrOpen)"/>
+<path d="M1650,210 H1670 V566" class="rel" marker-end="url(#arrOpen)"/>
+
+<!-- BusinessUnitSubscriber -> DatamartRepository -->
+<path d="M1550,544 V566" class="rel" marker-end="url(#arrOpen)"/>
+<text x="1556" y="558" class="relLabel">usa</text>
+
+<!-- EventStoreReader -> DatamartRepository -->
+<path d="M1800,470 V566" class="rel" marker-end="url(#arrOpen)"/>
+<text x="1806" y="558" class="relLabel">usa</text>
+
+<!-- RestApi -> DatamartRepository -->
+<path d="M1940,400 H1910" class="rel" marker-end="url(#arrOpen)"/>
+<text x="1900" y="392" class="relLabel" text-anchor="end">consulta</text>
+
+<!-- DatamartRepositoryTest -> DatamartRepository -->
+<path d="M1940,676 H1910" class="relDep" marker-end="url(#arrOpen)"/>
+
+<!-- DatamartRepository -> modelos -->
+<path d="M1670,938 V970" class="rel" marker-end="url(#arrDiamond)"/>
+<path d="M1770,938 V970" class="rel" marker-end="url(#arrDiamond)"/>
+<path d="M1870,938 C1900,950 2000,955 2010,970" class="rel" marker-end="url(#arrDiamond)"/>
+<path d="M1590,938 V1158" class="rel" marker-end="url(#arrDiamond)"/>
+<text x="1596" y="1050" class="relLabel">genera</text>
+
+<!-- BusinessUnitSubscriber -> MatchWeatherReport (crea y evalua) -->
+<path d="M1670,420 C1750,500 1750,900 1590,1158" class="relDep" marker-end="url(#arrOpen)"/>
+<text x="1700" y="700" class="relLabel">crea y evalúa</text>
+
+<!-- ============================================================ -->
+<!-- LEYENDA -->
+<!-- ============================================================ -->
+<g>
+  <rect x="50" y="1320" width="900" height="160" fill="#fbfbfb" stroke="#999" stroke-width="1"/>
+  <text x="70" y="1342" class="clsName" font-size="13">Leyenda</text>
+
+  <line x1="70" y1="1365" x2="130" y2="1365" class="rel" marker-end="url(#arrOpen)"/>
+  <text x="138" y="1369" class="meth">asociación / dependencia (uso entre clases)</text>
+
+  <line x1="70" y1="1388" x2="130" y2="1388" class="relDep" marker-end="url(#arrOpen)"/>
+  <text x="138" y="1392" class="meth">dependencia débil (crea / referencia puntual)</text>
+
+  <line x1="70" y1="1411" x2="130" y2="1411" class="rel" marker-end="url(#arrImpl)"/>
+  <text x="138" y="1415" class="meth">realización (implements de una interfaz)</text>
+
+  <line x1="70" y1="1434" x2="130" y2="1434" class="rel" marker-end="url(#arrDiamond)"/>
+  <text x="138" y="1438" class="meth">composición (genera instancias del modelo)</text>
+
+  <line x1="500" y1="1365" x2="560" y2="1365" class="relMsg" marker-end="url(#arrMsg)"/>
+  <text x="568" y="1369" class="meth">mensaje ActiveMQ (publish / subscribe)</text>
+
+  <rect x="500" y="1382" width="14" height="14" class="ifaceBox"/>
+  <text x="520" y="1393" class="meth">«interface»</text>
+  <rect x="500" y="1404" width="14" height="14" class="modelBox"/>
+  <text x="520" y="1415" class="meth">«modelo» (clase de datos)</text>
+  <rect x="700" y="1382" width="14" height="14" class="testBox"/>
+  <text x="720" y="1393" class="meth">«test» (JUnit 5)</text>
+  <rect x="700" y="1404" width="14" height="14" class="clsBox"/>
+  <text x="720" y="1415" class="meth">clase concreta</text>
+</g>
+
+</svg>
