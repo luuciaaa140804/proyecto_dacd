@@ -55,7 +55,7 @@ también los eventos históricos del event store para reconstruir el datamart.
 
 ### Diagrama de clases
 
-![Diagrama de clases](class_diagram_proyecto_dacd.jpg)
+![Diagrama de clases](class_diagram.png)
 
 ---
 
